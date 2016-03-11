@@ -1,0 +1,43 @@
+#!/bin/sh
+# SCRIPT
+# NAME: myvcs
+# DESCRIPTION: This script is the main executible for the myvcs script
+#				series. It is the entry point for all script commands,
+#				and it will call all the other scripts associated with it.
+# OPTIONS:
+#			[command] : (Required) The name of the command that this script will execute.
+#							Each command calls another script for that specific function.
+#			[options...] : (Optional) The various sub-scripts require various amounts of
+#							options. What will and won't be required varies depending on
+#							which command is used.
+
+# Store the current directory at the start of execution
+CURRENT_DIR=$(pwd)
+
+# Get shell script's directory and move shell there to execute config script
+SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
+cd $SCRIPT_DIR
+source ./bin/global.sh
+
+# If no arguments are supplied, then no command has been provided and the script cannot run
+if [ $# -eq 0 ]
+	then
+		echo "$TAG Error! No command specified."
+		exit 1
+fi
+
+case $1 in
+	$CREATE)
+		./bin/create.sh "${@:2}"
+	;;
+	$SVN)
+		./bin/svn.sh -wd "$CURRENT_DIR" "${@:2}"
+	;;
+	update-trunk)
+		./bin/update.sh -to
+	;;
+esac
+
+
+
+# 2) Test first arg to see which command is being used, and call the appropriate script
