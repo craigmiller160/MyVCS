@@ -34,7 +34,7 @@ function update_master_from_trunk_func {
 		then
 			echo "$TAG Changes from SVN trunk detected. Committing them to Git master."
 			git add . 1>/dev/null 2>/dev/null
-			git commit -m "Committing changes from SVN trunk. `date +%Y-%m-%d::%H:%M:%S`"
+			git commit -m "Committing changes from SVN trunk. `date +%Y-%m-%d::%H:%M:%S`" 1>/dev/null 2>/dev/null
 		else
 			echo "$TAG No changes from SVN trunk detected. Nothing to be committed to Git master."
 	fi

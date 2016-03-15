@@ -116,6 +116,16 @@ git remote add origin "$DEV_MAIN_PATH" 1>/dev/null 2>/dev/null
 git pull origin "$NAME" 1>/dev/null 2>/dev/null
 git branch -u origin/"$NAME" 1>/dev/null 2>/dev/null
 
-echo "$TAG New local Git branch & directory set up for $NAME."
+# Copy workspace.xml & vcs.xml files into .idea directory
+echo "$TAG Configuring IntelliJ preferences"
+git update-index --assume-unchanged "$DEV_ROOT_PATH/$NAME/.idea/vcs.xml"
+rm -f "$DEV_ROOT_PATH/$NAME/.idea/vcs.xml"
+cp "$HOME/myvcs/bin/vcs.xml" "$DEV_ROOT_PATH/$NAME/.idea" #### TODO make this more portable, less specific path-wise
+cp "$HOME/myvcs/bin/workspace.xml" "$DEV_ROOT_PATH/$NAME/.idea" #### TODO make this more portable, less specific path-wise
+
+# Modify .gitignore to avoid committing new vcs.xml file
+
+
+echo "$TAG New local Git branch & directory set up for [$NAME]."
 exit 0
 
