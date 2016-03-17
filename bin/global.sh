@@ -30,6 +30,10 @@ COMMIT="commit"
 INIT="init"
 SVN="svn"
 
+# Color values
+RED='\033[0;31m'
+NC='\033[0m'
+
 # The URL value produced by SVN URL parsing function
 SVN_URL=""
 
@@ -46,14 +50,14 @@ function svn_parse_url_func {
 	# Test that the function has the correct number of arguments
 	if [ $# -ne 1 ]
 		then
-			echo "$TAG Error! Invalid number of parameters for svn_parse_url_func."
+			printf "${RED}$TAG Error! Invalid number of parameters for svn_parse_url_func.${NC}\n"
 			return 1
 	fi
 
 	# Test the value of the parameter and assign the URL field its value
 	case "$1" in
 		http*)
-			echo "$TAG Error! Pure URLs cannot be provided to svn_switch_func, only relative names of the trunk/branch to use."
+			printf "${RED}$TAG Error! Pure URLs cannot be provided to svn_switch_func, only relative names of the trunk/branch to use.${NC}\n"
 			return 1
 		;;
 		trunk)
@@ -75,7 +79,7 @@ function svn_parse_url_func {
 function git_branch_exists_func {
 	if [ $# -ne 1 ]
 		then
-			echo "$TAG Error! Invalid number of arguments to git_branch_exists_func."
+			printf "${RED}$TAG Error! Invalid number of arguments to git_branch_exists_func.${NC}\n"
 	fi
 
 
@@ -83,7 +87,7 @@ function git_branch_exists_func {
 
 	if [ $? -ne 0 ]
 		then
-			echo "$TAG Error! Git branch [$1] doesn't exist."
+			printf "${RED}$TAG Error! Git branch [$1] doesn't exist.${NC}\n"
 			return 1
 	fi
 
@@ -101,7 +105,7 @@ function git_switch_func {
 	# Test that the propper number of arguments was supplied to the function
 	if [ $# -ne 1 ]
 		then
-			echo "$TAG Error! Invalid number of arguments to git_switch_func."
+			printf "${RED}$TAG Error! Invalid number of arguments to git_switch_func.${NC}\n"
 			return 1
 	fi
 
@@ -119,7 +123,7 @@ function git_switch_func {
 			git checkout "$1" 1>/dev/null 2>/dev/null
 			if [ $? -ne 0 ]
 				then
-					echo "$TAG Error! Unable to switch Git branch to [$1]. Re-run without suppressing output for more details."
+					printf "${RED}$TAG Error! Unable to switch Git branch to [$1]. Re-run without suppressing output for more details.${NC}\n"
 					return 1
 			fi
 		else
@@ -140,7 +144,7 @@ function svn_branch_exists_func {
 	# Test if the propper number of parameters have been supplied
 	if [ $# -ne 1 ]
 		then
-			echo "$TAG Error! Invalid number of parameters for svn_branch_exists_func."
+			printf "${RED}$TAG Error! Invalid number of parameters for svn_branch_exists_func.${NC}\n"
 	fi
 
 	# Run the SVN parse url function, and if it returns an error code end this function with an error code
@@ -154,7 +158,7 @@ function svn_branch_exists_func {
 	svn info "$SVN_URL" 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ]
 		then
-			echo "$TAG Error! SVN Branch [$1] doesn't exist"
+			printf "${RED}$TAG Error! SVN Branch [$1] doesn't exist.${NC}\n"
 			return 1
 	fi
 
@@ -177,7 +181,7 @@ function svn_switch_func {
 	# If the number of arguments is invalid, throw an error
 	if [ $# -lt 1 ] || [ $# -gt 2 ]
 		then
-			echo "$TAG Error! Invalid number of parameters for svn_switch_func"
+			printf "${RED}$TAG Error! Invalid number of parameters for svn_switch_func.${NC}\n"
 			return 1
 	fi
 
@@ -212,7 +216,7 @@ function svn_switch_func {
 			svn switch "$NEW_URL" 1>/dev/null 2>/dev/null
 			if [ $? -ne 0 ]
 				then
-					echo "$TAG Error! Unable to switch to SVN Branch [$BRANCH_NAME]. Re-run without suppressing output for more details."
+					printf "${RED}$TAG Error! Unable to switch to SVN Branch [$BRANCH_NAME]. Re-run without suppressing output for more details.${NC}\n"
 					return 1
 			fi
 		else
@@ -240,7 +244,7 @@ function svn_copy_func {
 	# Test the number of arguments first before proceeding
 	if [ $# -ne 2 ]
 		then
-			echo "$TAG Error! svn_copy_func requires two valid path arguments."
+			printf "${RED}$TAG Error! svn_copy_func requires two valid path arguments.${NC}\n"
 			return 1
 	fi
 
@@ -281,7 +285,7 @@ function svn_copy_func {
 	svn copy "$URL1" "$URL2" -m "$2 - Branch created." 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ]
 		then
-			echo "$TAG Error! Something went wrong during the SVN copy. Re-run without suppressing output for more details."
+			printf "${RED}$TAG Error! Something went wrong during the SVN copy. Re-run without suppressing output for more details.${NC}\n"
 			return 1
 	fi
 
@@ -301,7 +305,7 @@ function svn_merge_func {
 	# Test the number of arguments first
 	if [ $# -ne 1 ]
 		then
-			echo "$TAG Error! Invalid number of arguments to svn_merge_func."
+			printf "${RED}$TAG Error! Invalid number of arguments to svn_merge_func.${NC}\n"
 			return 1
 	fi
 
@@ -327,7 +331,7 @@ function svn_merge_func {
 	svn merge "$URL" "$DEV_MAIN_PATH" 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ]
 		then
-			echo "$TAG Error! Somethign went wrong during SVN merge. Check your SVN status and info to find the details."
+			printf "${RED}$TAG Error! Somethign went wrong during SVN merge. Check your SVN status and info to find the details.${NC}\n"
 			return 1
 	fi
 

@@ -1,0 +1,57 @@
+#!/bin/sh
+# SCRIPT
+# NAME: git.sh
+# DESCRIPTION: A script to conveniently execute certain complex operations
+#				involving Git.
+
+# Get shell script's directory and move shell there to execute config script
+SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
+cd $SCRIPT_DIR
+source ./global.sh
+
+# Move to the root of the dev directory and get a list of sub directories
+cd "$DEV_ROOT_PATH"
+DIRS=$(ls)
+
+# Iterate through sub directories and push them all to origin
+for DIR in ${DIRS[@]}; do
+	# Skip the dev main directory
+	if [ "$DIR" != "$DEV_MAIN_DIR" ]; then
+		cd "$DIR"
+		git push origin HEAD:"$DIR" 1>/dev/null 2>/dev/null
+
+		if [ $? -ne 0 ]; then
+			git pull origin "$DIR" 1>/dev/null 2>/dev/null
+
+			if [ $? -ne 0 ]; then
+					printf "${RED}$TAG Error! Failed to push $DIR to origin${NC}\n"
+			fi
+		fi
+
+		if [ $? -eq 0 ]; then
+			echo "$TAG Successfully $DIR to origin"
+		fi
+	fi
+	cd "$DEV_ROOT_PATH"
+done
+
+# Move to Main directory
+cd "$DEV_MAIN_PATH"
+
+# Get an array of all branch names from Git
+BRANCHES=()
+eval "$(git for-each-ref --shell --format='BRANCHES+=(%(refname))' refs/heads/)"
+echo "$TAG Backing up all branches in bitbucket. This could take a few minutes, please wait."
+# Iterate through all branches and push each one to bitbucket
+for BRANCH in "${BRANCHES[@]}"; do
+	BRANCH="$(awk -F/ '{print $3}' <<< $BRANCH)"
+	git push bitbucket "$BRANCH" 1>/dev/null 2>/dev/null
+
+	if [ $? -ne 0 ]; then
+		printf "${RED}$TAG Error! Failed to backup branch $BRANCH to bitbucket.${NC}"
+	else
+		printf "$TAG Successfully backed up branch $BRANCH to bitbucket.\n"
+	fi
+done
+
+exit 0

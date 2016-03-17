@@ -37,7 +37,7 @@ NAME=""
 #   at least two total params for this script to be able to run
 if [ $# -lt 1 ]
 	then
-		echo "$TAG Error! Invalid number of parameters supplied to create command"
+		printf "${RED}$TAG Error! Invalid number of parameters supplied to create command.${NC}\n"
 		exit 1
 fi
 
@@ -49,7 +49,7 @@ if [ $# -eq 1 ]
 		case "$1" in
 			# If it has a parameter prefix (-) or (--), then it is an invalid argument
 			-* | --*)
-				echo "$TAG Error! No valid branch name supplied. Branch names cannot start with parameter prefixes (-) and (--)."
+				printf "${RED}$TAG Error! No valid branch name supplied. Branch names cannot start with parameter prefixes (-) and (--).${NC}\n"
 				exit 1
 			;;
 			# Otherwise, set it as the branch name variable

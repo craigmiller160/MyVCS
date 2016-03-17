@@ -1,6 +1,6 @@
 #!/bin/sh
 # SCRIPT
-# NAME: global.sh
+# NAME: svn.sh
 # DESCRIPTION: A script to conveniently execute SVN commands. It avoids needing
 #				to produce the whole URL for various operations, thus making it
 #				much simpler to execute those commands.
@@ -38,7 +38,7 @@ PATH2=""
 function validate_command_func {
 	if [ $# -lt 1 ]
 		then
-			echo "$TAG CRITICAL ERROR!!! validate_command_func needs a single value to parse"
+			printf "${RED}$TAG CRITICAL ERROR!!! validate_command_func needs a single value to parse.${NC}\n"
 			return 1
 	fi
 
@@ -46,7 +46,8 @@ function validate_command_func {
 		copy)
 			if [ $# -ne 3 ]
 				then
-					echo "$TAG CRITICAL ERROR! copy command needs two pathnames as arguments."
+					printf "${RED}$TAG CRITICAL ERROR! copy command needs two pathnames as arguments.${NC}\n"
+					return 1
 				else
 					COMMAND="$1"
 					PATH1="$2"
@@ -56,14 +57,15 @@ function validate_command_func {
 		switch | merge)
 			if [ $# -ne 2 ]
 				then
-					echo "$TAG CRITICAL ERROR! $1 command needs one pathname as an argument."
+					printf "${RED}$TAG CRITICAL ERROR! $1 command needs one pathname as an argument.${NC}\n"
+					return 1
 				else
 					COMMAND="$1"
 					PATH1="$2"
 			fi
 		;;
 		*)
-			echo "$TAG CRITICAL ERROR!!! Invalid command $1"
+			printf "${RED}$TAG CRITICAL ERROR!!! Invalid command $1.${NC}\n"
 			return 1
 		;;
 	esac
@@ -80,7 +82,7 @@ source ./global.sh
 # Test the number of arguments supplied to this script and return an error if it's invalid
 if [ $# -lt 1 ]
 	then
-		echo "$TAG CRITICAL ERROR!!! Invalid number of arguments supplied to svn script."
+		printf "${RED}$TAG CRITICAL ERROR!!! Invalid number of arguments supplied to svn script.${NC}\n"
 		exit 1
 fi
 
@@ -127,3 +129,5 @@ case "$COMMAND" in
 		svn_switch_func "$PATH1"
 	;;
 esac
+
+exit 0
