@@ -119,7 +119,7 @@ function git_switch_func {
 			git checkout "$1" 1>/dev/null 2>/dev/null
 			if [ $? -ne 0 ]
 				then
-					echo "$TAG Error! Unable to switch Git branch to [$1]."
+					echo "$TAG Error! Unable to switch Git branch to [$1]. Re-run without suppressing output for more details."
 					return 1
 			fi
 		else
@@ -212,7 +212,7 @@ function svn_switch_func {
 			svn switch "$NEW_URL" 1>/dev/null 2>/dev/null
 			if [ $? -ne 0 ]
 				then
-					echo "$TAG Error! Unable to switch to SVN Branch [$BRANCH_NAME]."
+					echo "$TAG Error! Unable to switch to SVN Branch [$BRANCH_NAME]. Re-run without suppressing output for more details."
 					return 1
 			fi
 		else
@@ -248,6 +248,10 @@ function svn_copy_func {
 	URL1=""
 	URL2=""
 
+	#### TODO remove these
+	echo "Param1 $1"
+	echo "Param 2 $2"
+
 	# Parse the first URL parameter and assign it. If an error is returned from the parsing function, return an error
 	svn_parse_url_func "$1"
 	if [ $? -ne 0 ]
@@ -274,10 +278,10 @@ function svn_copy_func {
 	fi
 
 	echo "$TAG Creating SVN Branch [$2]"
-	svn copy "$URL1" "$URL2" 1>/dev/null 2>/dev/null
+	svn copy "$URL1" "$URL2" -m "$2 - Branch created." 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ]
 		then
-			echo "$TAG Error! Something went wrong during the SVN copy. Check your SVN status & info to find the details."
+			echo "$TAG Error! Something went wrong during the SVN copy. Re-run without suppressing output for more details."
 			return 1
 	fi
 
