@@ -106,7 +106,7 @@ if [ $? -ne 0 ]
 fi
 
 #########
-# TODO need to test copy & merge properly
+# TODO need to test merge properly
 #########
 
 # If USE_WD is true, change directory to the working directory provided
