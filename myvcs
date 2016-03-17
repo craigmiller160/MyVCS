@@ -36,6 +36,9 @@ case $1 in
 	update-trunk)
 		./bin/update.sh -to
 	;;
+	git-backup)
+		./bin/git.sh
+	;;
 esac
 
 

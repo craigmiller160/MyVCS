@@ -24,12 +24,12 @@ for DIR in ${DIRS[@]}; do
 			git pull origin "$DIR" 1>/dev/null 2>/dev/null
 
 			if [ $? -ne 0 ]; then
-					printf "${RED}$TAG Error! Failed to push $DIR to origin${NC}\n"
+					printf "${RED}$TAG $DIR: Failed to push to origin.${NC}\n"
 			fi
 		fi
 
 		if [ $? -eq 0 ]; then
-			echo "$TAG Successfully $DIR to origin"
+			echo "$TAG $DIR: Successfully pushed to origin"
 		fi
 	fi
 	cd "$DEV_ROOT_PATH"
@@ -48,9 +48,9 @@ for BRANCH in "${BRANCHES[@]}"; do
 	git push bitbucket "$BRANCH" 1>/dev/null 2>/dev/null
 
 	if [ $? -ne 0 ]; then
-		printf "${RED}$TAG Error! Failed to backup branch $BRANCH to bitbucket.${NC}"
+		printf "${RED}$TAG $BRANCH: Failed to backup to bitbucket.${NC}"
 	else
-		printf "$TAG Successfully backed up branch $BRANCH to bitbucket.\n"
+		printf "$TAG $BRANCH: Successfully backed up to bitbucket.\n"
 	fi
 done
 
