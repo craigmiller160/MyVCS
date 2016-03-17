@@ -254,10 +254,6 @@ function svn_copy_func {
 	URL1=""
 	URL2=""
 
-	#### TODO remove these
-	echo "Param1 $1"
-	echo "Param 2 $2"
-
 	# Parse the first URL parameter and assign it. If an error is returned from the parsing function, return an error
 	svn_parse_url_func "$1"
 	if [ $? -ne 0 ]
@@ -287,9 +283,11 @@ function svn_copy_func {
 	ERROR=$(svn copy "$URL1" "$URL2" -m "$2 - Branch created." 2>&1 >/dev/null)
 	if [ $? -ne 0 ]
 		then
-			printf "${RED}$TAG Error! Something went wrong during the SVN copy.${NC}\n"
+			printf "${RED}$TAG $2: Failed to create branch.${NC}\n"
 			printf "${RED}ERROR{NC}\n"
 			return 1
+		else
+			echo "$TAG $2: Successfully created branch"
 	fi
 
 	return 0

@@ -39,6 +39,8 @@ done
 # Move to Main directory
 cd "$DEV_MAIN_PATH"
 
+#### TODO need to handle output and errors for git checkout commands
+
 # Get an array of all branch names from Git
 BRANCHES=()
 eval "$(git for-each-ref --shell --format='BRANCHES+=(%(refname))' refs/heads/)"
@@ -46,6 +48,7 @@ echo "$TAG Backing up all branches in bitbucket. This could take a few minutes, 
 # Iterate through all branches and push each one to bitbucket
 for BRANCH in "${BRANCHES[@]}"; do
 	BRANCH="$(awk -F/ '{print $3}' <<< $BRANCH)"
+	git checkout "$BRANCH"
 	ERROR=$(git push bitbucket "$BRANCH" 2>&1 >/dev/null) 
 
 	if [ $? -ne 0 ]; then
@@ -56,5 +59,7 @@ for BRANCH in "${BRANCHES[@]}"; do
 		
 	fi
 done
+
+git checkout master ### TODO test if it's already on master first before trying to checkout
 
 exit 0
