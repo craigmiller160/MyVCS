@@ -25,6 +25,7 @@ for DIR in ${DIRS[@]}; do
 
 			if [ $? -ne 0 ]; then
 					printf "${RED}$TAG $DIR: Failed to push to origin.${NC}\n"
+					#### TODO need to add an error message here
 			fi
 		fi
 
@@ -45,12 +46,14 @@ echo "$TAG Backing up all branches in bitbucket. This could take a few minutes, 
 # Iterate through all branches and push each one to bitbucket
 for BRANCH in "${BRANCHES[@]}"; do
 	BRANCH="$(awk -F/ '{print $3}' <<< $BRANCH)"
-	git push bitbucket "$BRANCH" 1>/dev/null 2>/dev/null
+	ERROR=$(git push bitbucket "$BRANCH" 2>&1 >/dev/null) 
 
 	if [ $? -ne 0 ]; then
-		printf "${RED}$TAG $BRANCH: Failed to backup to bitbucket.${NC}"
+		printf "${RED}$TAG $BRANCH: Failed to backup to bitbucket.${NC}\n"
+		printf "${RED}$ERROR.${NC}\n"
 	else
 		printf "$TAG $BRANCH: Successfully backed up to bitbucket.\n"
+		
 	fi
 done
 

@@ -120,10 +120,11 @@ function git_switch_func {
 	if [ "$GIT_CUR_BRANCH" != "$1" ]
 		then
 			echo "$TAG Switching Git Branch to [$1]."
-			git checkout "$1" 1>/dev/null 2>/dev/null
+			ERROR=$(git checkout "$1" 2>&1 >/dev/null)
 			if [ $? -ne 0 ]
 				then
-					printf "${RED}$TAG Error! Unable to switch Git branch to [$1]. Re-run without suppressing output for more details.${NC}\n"
+					printf "${RED}$TAG Error! Unable to switch Git branch to [$1].${NC}\n"
+					printf "${RED}ERROR{NC}\n"
 					return 1
 			fi
 		else
@@ -213,10 +214,11 @@ function svn_switch_func {
 		then
 			# If the new URL and the current URL are different, execute the switch
 			echo "$TAG Switching SVN branch to [$BRANCH_NAME]."
-			svn switch "$NEW_URL" 1>/dev/null 2>/dev/null
+			ERROR=$(svn switch "$NEW_URL" 2>&1 >/dev/null)
 			if [ $? -ne 0 ]
 				then
-					printf "${RED}$TAG Error! Unable to switch to SVN Branch [$BRANCH_NAME]. Re-run without suppressing output for more details.${NC}\n"
+					printf "${RED}$TAG Error! Unable to switch to SVN Branch [$BRANCH_NAME].${NC}\n"
+					printf "${RED}ERROR{NC}\n"
 					return 1
 			fi
 		else
@@ -282,10 +284,11 @@ function svn_copy_func {
 	fi
 
 	echo "$TAG Creating SVN Branch [$2]"
-	svn copy "$URL1" "$URL2" -m "$2 - Branch created." 1>/dev/null 2>/dev/null
+	ERROR=$(svn copy "$URL1" "$URL2" -m "$2 - Branch created." 2>&1 >/dev/null)
 	if [ $? -ne 0 ]
 		then
-			printf "${RED}$TAG Error! Something went wrong during the SVN copy. Re-run without suppressing output for more details.${NC}\n"
+			printf "${RED}$TAG Error! Something went wrong during the SVN copy.${NC}\n"
+			printf "${RED}ERROR{NC}\n"
 			return 1
 	fi
 
@@ -328,10 +331,11 @@ function svn_merge_func {
 	fi
 
 	echo "$TAG Mergiing [$1] into working directory"
-	svn merge "$URL" "$DEV_MAIN_PATH" 1>/dev/null 2>/dev/null
+	ERROR=$(svn merge "$URL" "$DEV_MAIN_PATH" 2>&1 >/dev/null)
 	if [ $? -ne 0 ]
 		then
-			printf "${RED}$TAG Error! Somethign went wrong during SVN merge. Check your SVN status and info to find the details.${NC}\n"
+			printf "${RED}$TAG Error! Somethign went wrong during SVN merge.${NC}\n"
+			printf "${RED}ERROR{NC}\n"
 			return 1
 	fi
 
