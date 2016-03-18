@@ -48,10 +48,9 @@ SVN_URL=""
 #			[branch name] : (Required) The name of the branch, or "trunk" for trunk.
 function svn_parse_url_func {
 	# Test that the function has the correct number of arguments
-	if [ $# -ne 1 ]
-		then
-			printf "${RED}$TAG Error! Invalid number of parameters for svn_parse_url_func.${NC}\n"
-			return 1
+	if [ $# -ne 1 ]; then
+		printf "${RED}$TAG Error! Invalid number of parameters for svn_parse_url_func.${NC}\n"
+		return 1
 	fi
 
 	# Test the value of the parameter and assign the URL field its value
@@ -77,18 +76,16 @@ function svn_parse_url_func {
 # OPTIONS:
 #			[name] : (Required) The name of the branch to test the existence of.
 function git_branch_exists_func {
-	if [ $# -ne 1 ]
-		then
-			printf "${RED}$TAG Error! Invalid number of arguments to git_branch_exists_func.${NC}\n"
+	if [ $# -ne 1 ]; then
+		printf "${RED}$TAG Error! Invalid number of arguments to git_branch_exists_func.${NC}\n"
 	fi
 
 
 	git rev-parse --verify "$1" 1>/dev/null 2>/dev/null
 
-	if [ $? -ne 0 ]
-		then
-			printf "${RED}$TAG $1: Git branch doesn't exist.${NC}\n"
-			return 1
+	if [ $? -ne 0 ]; then
+		printf "${RED}$TAG $1: Git branch doesn't exist.${NC}\n"
+		return 1
 	fi
 
 	return 0
@@ -103,32 +100,28 @@ function git_branch_exists_func {
 #			[name] : (Required) The name of the branch to switch to.
 function git_switch_func {
 	# Test that the propper number of arguments was supplied to the function
-	if [ $# -ne 1 ]
-		then
-			printf "${RED}$TAG Error! Invalid number of arguments to git_switch_func.${NC}\n"
-			return 1
+	if [ $# -ne 1 ]; then
+		printf "${RED}$TAG Error! Invalid number of arguments to git_switch_func.${NC}\n"
+		return 1
 	fi
 
 	# Test if the branch exists first, and end the function if it doesn't
 	git_branch_exists_func $1
-	if [ $? -ne 0 ]
-		then
-			return 1
+	if [ $? -ne 0 ]; then
+		return 1
 	fi
 
 	GIT_CUR_BRANCH=$(git symbolic-ref HEAD | awk -F/ '{print $3}')
-	if [ "$GIT_CUR_BRANCH" != "$1" ]
-		then
-			echo "$TAG Switching Git Branch to [$1]."
-			ERROR=$(git checkout "$1" 2>&1 >/dev/null)
-			if [ $? -ne 0 ]
-				then
-					printf "${RED}$TAG Error! Unable to switch Git branch to [$1].${NC}\n"
-					printf "${RED}ERROR{NC}\n"
-					return 1
-			fi
-		else
-			echo "$TAG Directory already on Git Branch [$1]."
+	if [ "$GIT_CUR_BRANCH" != "$1" ]; then
+		echo "$TAG Switching Git Branch to [$1]."
+		ERROR=$(git checkout "$1" 2>&1 >/dev/null)
+		if [ $? -ne 0 ]; then
+			printf "${RED}$TAG Error! Unable to switch Git branch to [$1].${NC}\n"
+			printf "${RED}ERROR{NC}\n"
+			return 1
+		fi
+	else
+		echo "$TAG Directory already on Git Branch [$1]."
 	fi
 
 	return 0
@@ -143,24 +136,21 @@ function git_switch_func {
 #						always exist.
 function svn_branch_exists_func {
 	# Test if the propper number of parameters have been supplied
-	if [ $# -ne 1 ]
-		then
-			printf "${RED}$TAG Error! Invalid number of parameters for svn_branch_exists_func.${NC}\n"
+	if [ $# -ne 1 ]; then
+		printf "${RED}$TAG Error! Invalid number of parameters for svn_branch_exists_func.${NC}\n"
 	fi
 
 	# Run the SVN parse url function, and if it returns an error code end this function with an error code
 	svn_parse_url_func "$1"
-	if [ $? -ne 0 ]
-		then
-			return 1
+	if [ $? -ne 0 ]; then
+		return 1
 	fi
 
 	# Test for the existence of the branch
 	svn info "$SVN_URL" 1>/dev/null 2>/dev/null
-	if [ $? -ne 0 ]
-		then
-			printf "${RED}$TAG Error! SVN Branch [$1] doesn't exist.${NC}\n"
-			return 1
+	if [ $? -ne 0 ]; then
+		printf "${RED}$TAG Error! SVN Branch [$1] doesn't exist.${NC}\n"
+		return 1
 	fi
 
 	return 0
@@ -180,10 +170,9 @@ function svn_branch_exists_func {
 #						switches to the "trunk" of the repository.
 function svn_switch_func {
 	# If the number of arguments is invalid, throw an error
-	if [ $# -lt 1 ] || [ $# -gt 2 ]
-		then
-			printf "${RED}$TAG Error! Invalid number of parameters for svn_switch_func.${NC}\n"
-			return 1
+	if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+		printf "${RED}$TAG Error! Invalid number of parameters for svn_switch_func.${NC}\n"
+		return 1
 	fi
 
 	# The new URL to switch to
@@ -193,40 +182,36 @@ function svn_switch_func {
 
 	# Get the URL and assign it to a value here. If the parsing function returns an error, return an error
 	svn_parse_url_func "$1"
-	if [ $? -ne 0 ]
-		then
-			return 1
-		else
-			NEW_URL="$SVN_URL"
-			BRANCH_NAME="$1"
+	if [ $? -ne 0 ]; then
+		return 1
+	else
+		NEW_URL="$SVN_URL"
+		BRANCH_NAME="$1"
 	fi
 
 	# Test if the branch exists, and if it doesn't end the function
 	svn_branch_exists_func "$BRANCH_NAME"
-	if [ $? != 0 ]
-		then
-			return 1
+	if [ $? != 0 ]; then
+		return 1
 	fi
 
 	echo "$TAG $BRANCH_NAME: Switching to SVN branch."
 
 	# Get the current URL and execute depending on if it's the same as the current one
 	SVN_CUR_URL="$(svn info | awk '/^URL:/{print $2}')"
-	if [ "$SVN_CUR_URL" != "$NEW_URL" ]
-		then
-			# If the new URL and the current URL are different, execute the switch
-			ERROR=$(svn switch "$NEW_URL" 2>&1 >/dev/null)
-			if [ $? -ne 0 ]
-				then
-					printf "${RED}$TAG $BRANCH_NAME Unable to switch to SVN Branch.${NC}\n"
-					printf "${RED}ERROR{NC}\n"
-					return 1
-				else
-					echo "$TAG $BRANCH_NAME: Successfully switched to SVN branch."
-			fi
+	if [ "$SVN_CUR_URL" != "$NEW_URL" ]; then
+		# If the new URL and the current URL are different, execute the switch
+		ERROR=$(svn switch "$NEW_URL" 2>&1 >/dev/null)
+		if [ $? -ne 0 ]; then
+			printf "${RED}$TAG $BRANCH_NAME Unable to switch to SVN Branch.${NC}\n"
+			printf "${RED}ERROR{NC}\n"
+			return 1
 		else
-			# If the new URl and the current URL are the same, update the directory if that option was chosen
-			echo "$TAG $BRANCH_NAME: Directory is already on this SVN Branch."
+			echo "$TAG $BRANCH_NAME: Successfully switched to SVN branch."
+		fi
+	else
+		# If the new URl and the current URL are the same, update the directory if that option was chosen
+		echo "$TAG $BRANCH_NAME: Directory is already on this SVN Branch."
 	fi
 
 	return 0
@@ -247,10 +232,9 @@ function svn_switch_func {
 #						occur.
 function svn_copy_func {
 	# Test the number of arguments first before proceeding
-	if [ $# -ne 2 ]
-		then
-			printf "${RED}$TAG Error! svn_copy_func requires two valid path arguments.${NC}\n"
-			return 1
+	if [ $# -ne 2 ]; then
+		printf "${RED}$TAG Error! svn_copy_func requires two valid path arguments.${NC}\n"
+		return 1
 	fi
 
 	# The two URL parameters
@@ -259,38 +243,34 @@ function svn_copy_func {
 
 	# Parse the first URL parameter and assign it. If an error is returned from the parsing function, return an error
 	svn_parse_url_func "$1"
-	if [ $? -ne 0 ]
-		then
-			return 1
-		else
-			URL1="$SVN_URL"
+	if [ $? -ne 0 ]; then
+		return 1
+	else
+		URL1="$SVN_URL"
 	fi
 
 	# Parse the second URL parameter and assign it. If an error is returned from the parsing function, return an error
 	svn_parse_url_func "$2"
-	if [ $? -ne 0 ]
-		then
-			return 1
-		else
-			URL2="$SVN_URL"
+	if [ $? -ne 0 ]; then
+		return 1
+	else
+		URL2="$SVN_URL"
 	fi
 
 	# Test if the first branch, the source branch, exists before proceeding
 	svn_branch_exists_func "$1"
-	if [ $? -ne 0 ]
-		then
-			return 1
+	if [ $? -ne 0 ]; then
+		return 1
 	fi
 
 	echo "$TAG $2: Creating SVN Branch"
 	ERROR=$(svn copy "$URL1" "$URL2" -m "$2 - Branch created." 2>&1 >/dev/null)
-	if [ $? -ne 0 ]
-		then
-			printf "${RED}$TAG $2: Failed to create branch.${NC}\n"
-			printf "${RED}ERROR{NC}\n"
-			return 1
-		else
-			echo "$TAG $2: Successfully created branch"
+	if [ $? -ne 0 ]; then
+		printf "${RED}$TAG $2: Failed to create branch.${NC}\n"
+		printf "${RED}ERROR{NC}\n"
+		return 1
+	else
+		echo "$TAG $2: Successfully created branch"
 	fi
 
 	return 0
@@ -307,37 +287,33 @@ function svn_copy_func {
 #					else assumed to be the name of a branch that currently exists.
 function svn_merge_func {
 	# Test the number of arguments first
-	if [ $# -ne 1 ]
-		then
-			printf "${RED}$TAG Error! Invalid number of arguments to svn_merge_func.${NC}\n"
-			return 1
+	if [ $# -ne 1 ]; then
+		printf "${RED}$TAG Error! Invalid number of arguments to svn_merge_func.${NC}\n"
+		return 1
 	fi
 
 	URL=""
 
 	# Parse the URL parameter. If it's invalid, return an error code. Otherwise, assign it
 	svn_parse_url_func "$1"
-	if [ $? -ne 0 ]
-		then
-			return 1
-		else
-			URL="$SVN_URL"
+	if [ $? -ne 0 ]; then
+		return 1
+	else
+		URL="$SVN_URL"
 	fi
 
 	# Test if the branch exists. If it doesn't, return an error code.
 	svn_branch_exists_func "$1"
-	if [ $? -ne 0 ]
-		then
-			return 1
+	if [ $? -ne 0 ]; then
+		return 1
 	fi
 
 	echo "$TAG Merging [$1] into working directory"
 	ERROR=$(svn merge "$URL" "$DEV_MAIN_PATH" 2>&1 >/dev/null)
-	if [ $? -ne 0 ]
-		then
-			printf "${RED}$TAG Error! Somethign went wrong during SVN merge.${NC}\n"
-			printf "${RED}ERROR${NC}\n"
-			return 1
+	if [ $? -ne 0 ]; then
+		printf "${RED}$TAG Error! Somethign went wrong during SVN merge.${NC}\n"
+		printf "${RED}ERROR${NC}\n"
+		return 1
 	fi
 
 	return 0

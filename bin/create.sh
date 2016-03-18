@@ -36,28 +36,26 @@ NAME=""
 # Test that there is at least one parameter for this command.
 # Param $1 will always be the command name, so there need to be
 #   at least two total params for this script to be able to run
-if [ $# -lt 1 ]
-	then
-		printf "${RED}$TAG Error! Invalid number of parameters supplied to create command.${NC}\n"
-		exit 1
+if [ $# -lt 1 ]; then
+	printf "${RED}$TAG Error! Invalid number of parameters supplied to create command.${NC}\n"
+	exit 1
 fi
 
 # If there is only one parameter (two total, including the command),
 #   then that parameter MUST be the name of the branch. If it is another
 #   parameter value, then an error will be thrown.
-if [ $# -eq 1 ]
-	then
-		case "$1" in
-			# If it has a parameter prefix (-) or (--), then it is an invalid argument
-			-* | --*)
-				printf "${RED}$TAG Error! No valid branch name supplied. Branch names cannot start with parameter prefixes (-) and (--).${NC}\n"
-				exit 1
-			;;
-			# Otherwise, set it as the branch name variable
-			*)
-				NAME="$1"
-			;;
-		esac
+if [ $# -eq 1 ]; then
+	case "$1" in
+		# If it has a parameter prefix (-) or (--), then it is an invalid argument
+		-* | --*)
+			printf "${RED}$TAG Error! No valid branch name supplied. Branch names cannot start with parameter prefixes (-) and (--).${NC}\n"
+			exit 1
+		;;
+		# Otherwise, set it as the branch name variable
+		*)
+			NAME="$1"
+		;;
+	esac
 fi
 
 # Output what the command is going to do
@@ -68,16 +66,14 @@ cd "$DEV_MAIN_PATH"
 
 # Ensure that the Git Branch is on trunk
 git_switch_func "master"
-if [ $? -ne 0 ]
-	then
-		return 1
+if [ $? -ne 0 ]; then
+	return 1
 fi
 
 # Ensure that the SVN Branch is on trunk
 svn_switch_func "trunk"
-if [ $? -ne 0 ]
-	then
-		return 1
+if [ $? -ne 0 ]; then
+	return 1
 fi
 
 #####################
@@ -86,18 +82,16 @@ fi
 
 # Test if there are any files that SVN sees having changes, and revert them
 #   Git Trunk should always be a pure version of SVN's Trunk, with no files differing
-if [ ! -z "$(svn status)" ]
-	then
-		echo "$TAG Resolving conflicts with SVN files on trunk."
-		svn revert -R . 1>/dev/null 2>/dev/null
+if [ ! -z "$(svn status)" ]; then
+	echo "$TAG Resolving conflicts with SVN files on trunk."
+	svn revert -R . 1>/dev/null 2>/dev/null
 fi
 
 # Test if there are any changes that need to be committed to the Git Trunk
-if [ ! -z "$(git status --porcelain)" ]
-	then
-		echo "$TAG Commiting to Git resolved conflicts with files on SVN trunk."
-		git add . 1>/dev/null 2>/dev/null
-		git commit -m "Resolving conflicts with SVN Trunk. `date +%Y-%m-%d::%H:%M:%S`" 1>/dev/null 2>/dev/null
+if [ ! -z "$(git status --porcelain)" ]; then
+	echo "$TAG Commiting to Git resolved conflicts with files on SVN trunk."
+	git add . 1>/dev/null 2>/dev/null
+	git commit -m "Resolving conflicts with SVN Trunk. `date +%Y-%m-%d::%H:%M:%S`" 1>/dev/null 2>/dev/null
 fi
 
 # Create a Git branch for the new directory

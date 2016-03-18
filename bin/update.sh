@@ -16,6 +16,10 @@ source ./global.sh
 
 ### TODO need to be able to handle conflicts silently and warn the user about them
 
+# FUNCTION
+# NAME: update_master_from_trunk_func
+# DESCRIPTION: This function updates the master Git branch on the local machine
+#				from the SVN trunk. Any changes from SVN will be committed to Git.
 function update_master_from_trunk_func {
 	cd "$DEV_MAIN_PATH"
 
@@ -25,19 +29,19 @@ function update_master_from_trunk_func {
 	echo "$TAG Updating from SVN trunk"
 	svn update . 1>/dev/null 2>/dev/null
 
-	if [ ! -z "$(svn status)" ]
-		then
-			echo "$TAG Resolving conflicts with SVN files on trunk."
-			svn revert -R . 1>/dev/null 2>/dev/null
+	# Revert to solve any conflicts
+	if [ ! -z "$(svn status)" ]; then
+		echo "$TAG Resolving conflicts with SVN files on trunk."
+		svn revert -R . 1>/dev/null 2>/dev/null
 	fi
 
-	if [ ! -z "$(git status --porcelain)" ]
-		then
-			echo "$TAG Changes from SVN trunk detected. Committing them to Git master."
-			git add . 1>/dev/null 2>/dev/null
-			git commit -m "Committing changes from SVN trunk. `date +%Y-%m-%d::%H:%M:%S`" 1>/dev/null 2>/dev/null
-		else
-			echo "$TAG No changes from SVN trunk detected. Nothing to be committed to Git master."
+	# Commit any changes that are detected.
+	if [ ! -z "$(git status --porcelain)" ]; then
+		echo "$TAG Changes from SVN trunk detected. Committing them to Git master."
+		git add . 1>/dev/null 2>/dev/null
+		git commit -m "Committing changes from SVN trunk. `date +%Y-%m-%d::%H:%M:%S`" 1>/dev/null 2>/dev/null
+	else
+		echo "$TAG No changes from SVN trunk detected. Nothing to be committed to Git master."
 	fi
 }
 

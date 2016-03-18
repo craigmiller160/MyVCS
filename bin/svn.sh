@@ -42,32 +42,29 @@ PATH2=""
 #			[pathsnames...] : (Optional/Required) The names of the URL paths to use with
 #								the command. One or more are required, depending on the command.
 function validate_command_func {
-	if [ $# -lt 1 ]
-		then
-			printf "${RED}$TAG CRITICAL ERROR!!! validate_command_func needs a single value to parse.${NC}\n"
-			return 1
+	if [ $# -lt 1 ]; then
+		printf "${RED}$TAG CRITICAL ERROR!!! validate_command_func needs a single value to parse.${NC}\n"
+		return 1
 	fi
 
 	case "$1" in
 		copy)
-			if [ $# -ne 3 ]
-				then
-					printf "${RED}$TAG CRITICAL ERROR! copy command needs two pathnames as arguments.${NC}\n"
-					return 1
-				else
-					COMMAND="$1"
-					PATH1="$2"
-					PATH2="$3"
+			if [ $# -ne 3 ]; then
+				printf "${RED}$TAG CRITICAL ERROR! copy command needs two pathnames as arguments.${NC}\n"
+				return 1
+			else
+				COMMAND="$1"
+				PATH1="$2"
+				PATH2="$3"
 			fi
 		;;
 		switch | merge)
-			if [ $# -ne 2 ]
-				then
-					printf "${RED}$TAG CRITICAL ERROR! $1 command needs one pathname as an argument.${NC}\n"
-					return 1
-				else
-					COMMAND="$1"
-					PATH1="$2"
+			if [ $# -ne 2 ]; then
+				printf "${RED}$TAG CRITICAL ERROR! $1 command needs one pathname as an argument.${NC}\n"
+				return 1
+			else
+				COMMAND="$1"
+				PATH1="$2"
 			fi
 		;;
 		*)
@@ -81,31 +78,27 @@ function validate_command_func {
 
 
 # Test the number of arguments supplied to this script and return an error if it's invalid
-if [ $# -lt 1 ]
-	then
-		printf "${RED}$TAG CRITICAL ERROR!!! Invalid number of arguments supplied to svn script.${NC}\n"
-		exit 1
+if [ $# -lt 1 ]; then
+	printf "${RED}$TAG CRITICAL ERROR!!! Invalid number of arguments supplied to svn script.${NC}\n"
+	exit 1
 fi
 
 # If the first argument is the working directory flag, set those values
-if [ "$1" = "-wd" ] || [ "$1" = "--working-directory" ]
-	then
-		USE_WD="true"
-		WORKING_DIR="$2"
+if [ "$1" = "-wd" ] || [ "$1" = "--working-directory" ]; then
+	USE_WD="true"
+	WORKING_DIR="$2"
 fi
 
 # Validate and set the function command, whose position is determined by the USE_WD flag
-if [ "$USE_WD" != "true" ]
-	then
-		validate_command_func "$@"
-	else
-		validate_command_func "${@:3}"
+if [ "$USE_WD" != "true" ]; then
+	validate_command_func "$@"
+else
+	validate_command_func "${@:3}"
 fi
 
 # Test the status code for the function. If an error, exit the script
-if [ $? -ne 0 ]
-	then
-		exit 1
+if [ $? -ne 0 ]; then
+	exit 1
 fi
 
 #########
@@ -113,9 +106,8 @@ fi
 #########
 
 # If USE_WD is true, change directory to the working directory provided
-if [ "$USE_WD" = "true" ]
-	then
-		cd "$WORKING_DIR"
+if [ "$USE_WD" = "true" ]; then
+	cd "$WORKING_DIR"
 fi
 
 # Execute the command with the provided arguments
@@ -130,5 +122,7 @@ case "$COMMAND" in
 		svn_switch_func "$PATH1"
 	;;
 esac
+
+echo "Closing Status: $?"
 
 exit 0
