@@ -34,8 +34,8 @@ case $1 in
 	$SVN)
 		./bin/svn.sh -wd "$CURRENT_DIR" "${@:2}"
 	;;
-	update-trunk)
-		./bin/update.sh -to
+	update)
+		./bin/update.sh "${@:2}"
 	;;
 	git)
 		./bin/git.sh "${@:2}"

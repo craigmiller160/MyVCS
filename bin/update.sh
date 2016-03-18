@@ -2,11 +2,11 @@
 # SCRIPT
 # NAME: update.sh
 # DESCRIPTION: This is the script that handles updating the working directory.
-#				Initially it is being created to handle updating the Git master
-#				branch from Trunk, but it will ultimately do more than that.
+#				It receives the name of the branch to pull updated data from SVN
+#				for, and then merge that update into the local Git branch.
 # OPTIONS:
-#			[-to | --trunk-only] : (Optional) A flag to indicate that this update
-#									is simply to update the Git master branch from SVN trunk.
+#			[branch name] : (Required) The name of the branch to pull an update
+#								from SVN for and merge into the Git branch.
 
 # Get shell script's directory and move shell there to execute config script
 # SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
@@ -41,10 +41,15 @@ function update_master_from_trunk_func {
 	fi
 }
 
+# Check the number of arguments first
+if [ $# -ne 1 ]; then
+	printf "${RED}$TAG Error! Need to specify name of branch to update${NC}."
+fi
+
 echo "$TAG Downloading any changes from SVN trunk"
 
 case $1 in
-	-to | --trunk-only)
+	trunk)
 		update_master_from_trunk_func
 	;;
 esac
