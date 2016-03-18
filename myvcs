@@ -36,8 +36,11 @@ case $1 in
 	update-trunk)
 		./bin/update.sh -to
 	;;
-	git-backup)
-		./bin/git.sh
+	git)
+		./bin/git.sh "${@:2}"
+	;;
+	delete)
+		./bin/delete.sh "${@:2}"
 	;;
 esac
 

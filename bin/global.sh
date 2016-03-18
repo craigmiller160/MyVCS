@@ -87,7 +87,7 @@ function git_branch_exists_func {
 
 	if [ $? -ne 0 ]
 		then
-			printf "${RED}$TAG Error! Git branch [$1] doesn't exist.${NC}\n"
+			printf "${RED}$TAG $1: Git branch doesn't exist.${NC}\n"
 			return 1
 	fi
 
@@ -208,22 +208,25 @@ function svn_switch_func {
 			return 1
 	fi
 
+	echo "$TAG $BRANCH_NAME: Switching to SVN branch."
+
 	# Get the current URL and execute depending on if it's the same as the current one
 	SVN_CUR_URL="$(svn info | awk '/^URL:/{print $2}')"
 	if [ "$SVN_CUR_URL" != "$NEW_URL" ]
 		then
 			# If the new URL and the current URL are different, execute the switch
-			echo "$TAG Switching SVN branch to [$BRANCH_NAME]."
 			ERROR=$(svn switch "$NEW_URL" 2>&1 >/dev/null)
 			if [ $? -ne 0 ]
 				then
-					printf "${RED}$TAG Error! Unable to switch to SVN Branch [$BRANCH_NAME].${NC}\n"
+					printf "${RED}$TAG $BRANCH_NAME Unable to switch to SVN Branch.${NC}\n"
 					printf "${RED}ERROR{NC}\n"
 					return 1
+				else
+					echo "$TAG $BRANCH_NAME: Successfully switched to SVN branch."
 			fi
 		else
 			# If the new URl and the current URL are the same, update the directory if that option was chosen
-			echo "$TAG Directory is on SVN Branch [$BRANCH_NAME]."
+			echo "$TAG $BRANCH_NAME: Directory is already on this SVN Branch."
 	fi
 
 	return 0
@@ -279,7 +282,7 @@ function svn_copy_func {
 			return 1
 	fi
 
-	echo "$TAG Creating SVN Branch [$2]"
+	echo "$TAG $2: Creating SVN Branch"
 	ERROR=$(svn copy "$URL1" "$URL2" -m "$2 - Branch created." 2>&1 >/dev/null)
 	if [ $? -ne 0 ]
 		then
