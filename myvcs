@@ -42,6 +42,9 @@ case $1 in
 	delete)
 		./bin/delete.sh "${@:2}"
 	;;
+	*)
+		printf "${RED}$TAG Error! Invalid command.${NC}\n"
+	;;
 esac
 
 

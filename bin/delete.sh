@@ -14,11 +14,38 @@ SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
 cd $SCRIPT_DIR
 source ./global.sh
 
-if [ ?# -ne 1 ]; then
+if [ $# -ne 1 ]; then
 	printf "${RED}$TAG Error! Delete command requires a branch name parameter.${NC}\n"
 	exit 1
 fi
 
+case "$1" in
+	"$DEV_MAIN_DIR" | "master")
+		printf "${RED}$TAG Error! Cann't delete main development branch.${NC}\n"
+		exit 1
+	;;
+esac
 
+echo "$TAG $1: Preparing to delete branch from filesystem, local Git, and remote Git."
+
+cd "$DEV_ROOT_PATH"
+
+# If a directory with that name exists, delete it from the fielsystem.
+DIR_EXISTS=$(ls | grep $1)
+if [ "$DIR_EXISTS" != "" ]; then
+	echo "$TAG $1: Deleting branch directory from filesystem."
+	ERROR=$(rm -rf "$1" 2>&1 >/dev/null)
+	if [ $? -ne 0 ]; then
+		printf "${RED}$TAG $1: Unable to delete branch directory from filesystem.${NC}\n"
+		printf "${RED}$ERROR${NC}"
+	else
+		echo "$TAG $1: Successfully deleted branch directory from filesystem."
+	fi
+else
+	printf "${RED}$TAG $1: Branch is not a directory on local filesystem. Nothing deleted.${NC}\n"
+fi
+
+### TODO make this call more platform-independent
+~/myvcs/bin/git.sh delete $1
 
 exit 0

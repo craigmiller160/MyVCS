@@ -331,12 +331,12 @@ function svn_merge_func {
 			return 1
 	fi
 
-	echo "$TAG Mergiing [$1] into working directory"
+	echo "$TAG Merging [$1] into working directory"
 	ERROR=$(svn merge "$URL" "$DEV_MAIN_PATH" 2>&1 >/dev/null)
 	if [ $? -ne 0 ]
 		then
 			printf "${RED}$TAG Error! Somethign went wrong during SVN merge.${NC}\n"
-			printf "${RED}ERROR{NC}\n"
+			printf "${RED}ERROR${NC}\n"
 			return 1
 	fi
 

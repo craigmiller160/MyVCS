@@ -108,7 +108,7 @@ if [ $? -ne 0 ]
 fi
 
 #########
-# TODO need to test merge properly
+# TODO Need to remove the require working directory option, don't even want that to be an option here
 #########
 
 # If USE_WD is true, change directory to the working directory provided
@@ -123,7 +123,7 @@ case "$COMMAND" in
 		svn_copy_func "$PATH1" "$PATH2"
 	;;
 	merge)
-		svn_merge_func "$PATH1" "$WORKING_DIR"
+		svn_merge_func "$PATH1"
 	;;
 	switch)
 		svn_switch_func "$PATH1"
