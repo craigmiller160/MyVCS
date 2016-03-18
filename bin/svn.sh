@@ -15,6 +15,12 @@
 #			[pathnames...] : (Required/Optional) Depending on the command, certain pathnames
 #								may be needed for execution.
 
+# Get shell script's directory and move shell there to execute config script
+# SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $SCRIPT_DIR
+source ./global.sh
+
 # Whether or not a working directory value is supplied
 USE_WD="false"
 # The working directory, if it's supplied
@@ -73,11 +79,6 @@ function validate_command_func {
 	return 0
 }
 
-
-# Get shell script's directory and move shell there to execute config script
-SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
-cd $SCRIPT_DIR
-source ./global.sh
 
 # Test the number of arguments supplied to this script and return an error if it's invalid
 if [ $# -lt 1 ]

@@ -9,11 +9,17 @@
 #							certain commands.
 
 # Get shell script's directory and move shell there to execute config script
-SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
+# SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
 source ./global.sh
 
-#### TODO document this function
+# FUNCTION
+# NAME: git_backup_func
+# DESCRIPTION: A function to backup all Git branches. It first pushes updated 
+#				content from all Git branch directories to the corresponding
+#				branches in the main directory. It then backs up all the branches
+#				in the main directory with the bitbucket repository.
 function git_backup_func {
 
 	# Move to the root of the dev directory and get a list of sub directories
@@ -71,7 +77,14 @@ function git_backup_func {
 
 }
 
-##### TODO document this function
+# FUNCTION
+# NAME: git_delete_func
+# DESCRIPTION: A function to delete a Git branch. This function deletes its 
+#				directory from the local filesystem, then deletes its local
+#				Git branch, then deletes its branch in the remote bitbucket
+#				repository.
+# OPTIONS:
+#			[branch name] : (Required) The name of the branch to delete
 function git_delete_func {
 
 	# Test the number of arguments
@@ -114,9 +127,9 @@ function git_delete_func {
 }
 
 # Test that there is a valid number of arguments
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
 	printf "${RED}$TAG Error! Invalid number of arguments.${NC}\n"
-	return 1
+	exit 1
 fi
 
 # Test the parameter to see which command to run

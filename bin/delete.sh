@@ -10,7 +10,8 @@
 #			[branch name] : (Required) The name of the branch to delete
 
 # Get shell script's directory and move shell there to execute config script
-SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
+# SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
 source ./global.sh
 
@@ -46,6 +47,6 @@ else
 fi
 
 ### TODO make this call more platform-independent
-~/myvcs/bin/git.sh delete $1
+$SCRIPT_DIR/git.sh delete $1
 
 exit 0
