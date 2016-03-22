@@ -47,7 +47,7 @@ function update_master_from_trunk_func {
 
 # Check the number of arguments first
 if [ $# -ne 1 ]; then
-	printf "${RED}$TAG Error! Need to specify name of branch to update${NC}."
+	printf "${RED}${BOLD}$TAG Error! Need to specify name of branch to update.${NORM}${NC}."
 fi
 
 echo "$TAG Downloading any changes from SVN trunk"

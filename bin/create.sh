@@ -37,7 +37,7 @@ NAME=""
 # Param $1 will always be the command name, so there need to be
 #   at least two total params for this script to be able to run
 if [ $# -lt 1 ]; then
-	printf "${RED}$TAG Error! Invalid number of parameters supplied to create command.${NC}\n"
+	printf "${RED}${BOLD}$TAG Error! Invalid number of parameters supplied to create command.${NORM}${NC}\n"
 	exit 1
 fi
 
@@ -48,7 +48,7 @@ if [ $# -eq 1 ]; then
 	case "$1" in
 		# If it has a parameter prefix (-) or (--), then it is an invalid argument
 		-* | --*)
-			printf "${RED}$TAG Error! No valid branch name supplied. Branch names cannot start with parameter prefixes (-) and (--).${NC}\n"
+			printf "${RED}${BOLD}$TAG Error! No valid branch name supplied. Branch names cannot start with parameter prefixes (-) and (--).${NORM}${NC}\n"
 			exit 1
 		;;
 		# Otherwise, set it as the branch name variable
@@ -117,9 +117,6 @@ git update-index --assume-unchanged "$DEV_ROOT_PATH/$NAME/.idea/vcs.xml"
 rm -f "$DEV_ROOT_PATH/$NAME/.idea/vcs.xml"
 cp "$HOME/myvcs/bin/vcs.xml" "$DEV_ROOT_PATH/$NAME/.idea" #### TODO make this more portable, less specific path-wise
 cp "$HOME/myvcs/bin/workspace.xml" "$DEV_ROOT_PATH/$NAME/.idea" #### TODO make this more portable, less specific path-wise
-
-# Modify .gitignore to avoid committing new vcs.xml file
-
 
 echo "$TAG New local Git branch & directory set up for [$NAME]."
 exit 0

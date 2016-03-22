@@ -37,7 +37,7 @@ function git_backup_func {
 				git pull origin "$DIR" 1>/dev/null 2>/dev/null
 
 				if [ $? -ne 0 ]; then
-						printf "${RED}$TAG $DIR: Failed to push to origin.${NC}\n"
+						printf "${RED}${BOLD}$TAG $DIR: Failed to push to origin.${NORM}${NC}\n"
 						#### TODO need to add an error message here
 				fi
 			fi
@@ -65,7 +65,7 @@ function git_backup_func {
 		ERROR=$(git push bitbucket "$BRANCH" 2>&1 >/dev/null) 
 
 		if [ $? -ne 0 ]; then
-			printf "${RED}$TAG $BRANCH: Failed to backup to bitbucket.${NC}\n"
+			printf "${RED}${BOLD}$TAG $BRANCH: Failed to backup to bitbucket.${NORM}${NC}\n"
 			printf "${RED}$ERROR.${NC}\n"
 		else
 			printf "$TAG $BRANCH: Successfully backed up to bitbucket.\n"
@@ -89,7 +89,7 @@ function git_delete_func {
 
 	# Test the number of arguments
 	if [ $# -ne 1 ]; then
-		printf "${RED}$TAG Error! Invalid number of arguments to git_delete_func.${NC}\n"
+		printf "${RED}${BOLD}$TAG Error! Invalid number of arguments to git_delete_func.${NORM}${NC}\n"
 		return 1
 	fi
 
@@ -113,7 +113,7 @@ function git_delete_func {
 		# Delete the remote branch
 		ERROR=$(git push bitbucket --delete $1 2>&1 >/dev/null)
 		if [ $? -ne 0 ]; then
-			printf "${RED}$TAG $1: Unable to delete remote branch.${NC}\n"
+			printf "${RED}${BOLD}$TAG $1: Unable to delete remote branch.${NORM}${NC}\n"
 			printf "${RED}$ERROR${NC}\n"
 		else
 			echo "$TAG $1: Successfully deleted remote Git branch."
@@ -128,7 +128,7 @@ function git_delete_func {
 
 # Test that there is a valid number of arguments
 if [ $# -lt 1 ]; then
-	printf "${RED}$TAG Error! Invalid number of arguments.${NC}\n"
+	printf "${RED}${BOLD}$TAG Error! Invalid number of arguments.${NORM}${NC}\n"
 	exit 1
 fi
 

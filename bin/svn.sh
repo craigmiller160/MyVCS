@@ -43,14 +43,14 @@ PATH2=""
 #								the command. One or more are required, depending on the command.
 function validate_command_func {
 	if [ $# -lt 1 ]; then
-		printf "${RED}$TAG CRITICAL ERROR!!! validate_command_func needs a single value to parse.${NC}\n"
+		printf "${RED}${BOLD}$TAG CRITICAL ERROR!!! validate_command_func needs a single value to parse.${NORM}${NC}\n"
 		return 1
 	fi
 
 	case "$1" in
 		copy)
 			if [ $# -ne 3 ]; then
-				printf "${RED}$TAG CRITICAL ERROR! copy command needs two pathnames as arguments.${NC}\n"
+				printf "${RED}${BOLD}$TAG CRITICAL ERROR! copy command needs two pathnames as arguments.${NORM}${NC}\n"
 				return 1
 			else
 				COMMAND="$1"
@@ -60,7 +60,7 @@ function validate_command_func {
 		;;
 		switch | merge)
 			if [ $# -ne 2 ]; then
-				printf "${RED}$TAG CRITICAL ERROR! $1 command needs one pathname as an argument.${NC}\n"
+				printf "${RED}${BOLD}$TAG CRITICAL ERROR! $1 command needs one pathname as an argument.${NORM}${NC}\n"
 				return 1
 			else
 				COMMAND="$1"
@@ -68,7 +68,7 @@ function validate_command_func {
 			fi
 		;;
 		*)
-			printf "${RED}$TAG CRITICAL ERROR!!! Invalid command $1.${NC}\n"
+			printf "${RED}${BOLD}$TAG CRITICAL ERROR!!! Invalid command $1.${NORM}${NC}\n"
 			return 1
 		;;
 	esac
@@ -79,7 +79,7 @@ function validate_command_func {
 
 # Test the number of arguments supplied to this script and return an error if it's invalid
 if [ $# -lt 1 ]; then
-	printf "${RED}$TAG CRITICAL ERROR!!! Invalid number of arguments supplied to svn script.${NC}\n"
+	printf "${RED}${BOLD}$TAG CRITICAL ERROR!!! Invalid number of arguments supplied to svn script.${NORM}${NC}\n"
 	exit 1
 fi
 
@@ -122,7 +122,5 @@ case "$COMMAND" in
 		svn_switch_func "$PATH1"
 	;;
 esac
-
-echo "Closing Status: $?"
 
 exit 0
