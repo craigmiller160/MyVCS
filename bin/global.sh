@@ -216,7 +216,7 @@ function svn_switch_func {
 
 	# Alert the user if there are any merge conflicts
 	IFS=$'\n'
-	CONFLICTS=($(svn status | grep "^\s*C\|>"))
+	CONFLICTS=($(svn status | grep "^.*\s*C\|>"))
 	if [ "$CONFLICTS" != "" ]; then
 		printf "${RED}${BOLD}$TAG Error! Merge conflicts exist and must be resolved.${NORM}${NC}\n"
 		for i in "${CONFLICTS[@]}"; do
@@ -331,7 +331,7 @@ function svn_merge_func {
 
 	# Alert the user if there are any merge conflicts
 	IFS=$'\n'
-	CONFLICTS=($(svn status | grep "^\s*C\|>"))
+	CONFLICTS=($(svn status | grep "^.*\s*C\|>"))
 	if [ "$CONFLICTS" != "" ]; then
 		printf "${RED}${BOLD}$TAG Error! Merge conflicts exist and must be resolved.${NORM}${NC}\n"
 		for i in "${CONFLICTS[@]}"; do

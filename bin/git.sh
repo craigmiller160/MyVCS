@@ -22,6 +22,13 @@ source ./global.sh
 #				in the main directory with the bitbucket repository.
 function git_backup_func {
 
+	cd "$DEV_MAIN_PATH"
+	BRANCH=$(svn info | grep ^URL | awk '{print $2}')
+	if [ "$BRANCH" != "$SVN_TRUNK_URL" ]; then
+		printf "${RED}${BOLD}$TAG Error! Main directory not on SVN trunk. Resolve this and try again.${NORM}${NC}\n"
+		return 1
+	fi
+
 	# Move to the root of the dev directory and get a list of sub directories
 	cd "$DEV_ROOT_PATH"
 	DIRS=$(ls)
