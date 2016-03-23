@@ -133,6 +133,26 @@ function git_delete_func {
 
 }
 
+# FUNCTION
+# DESCRIPTION: A function to show custom formatted Git logs.
+function git_log_func {
+
+	git log --pretty=format:'%ad | %H%n%s%n%b' --date=format:'%m-%d-%Y %H:%M:%S'
+	return 0
+
+}
+
+# FUNCTION
+# DESCRIPTION: A function to parse the parameters to the Git log function.
+#				It determines what value that parameter should have.
+# OPTIONS:
+#			[param] : (Required) The value of the parameter to parse.
+function parse_git_log_param_func {
+
+	
+
+}
+
 # Test that there is a valid number of arguments
 if [ $# -lt 1 ]; then
 	printf "${RED}${BOLD}$TAG Error! Invalid number of arguments.${NORM}${NC}\n"
@@ -146,6 +166,9 @@ case $1 in
 	;;
 	delete)
 		git_delete_func "$2"
+	;;
+	log)
+		git_log_func "${@:2}"
 	;;
 esac
 
