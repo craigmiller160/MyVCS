@@ -135,6 +135,10 @@ function git_delete_func {
 
 # FUNCTION
 # DESCRIPTION: A function to show custom formatted Git logs.
+# OPTIONS :
+#			[directory] : (Required) The directory managed by Git
+#							that a log should be obtained for.
+#			-l | --limit : (Optional) Limit the number of log entries returned.
 function git_log_func {
 
 	if [ $# -lt 1 ]; then
@@ -142,11 +146,18 @@ function git_log_func {
 		return 1
 	fi
 
-	cd "$1"
+	# Third argument is always the directory to run the log from
+	cd "$3"
 
-	echo "$2"
+	# First argument defines the limit on the number of log entries
+	LIMIT=""
+	case "$1" in
+		-l | --limit)
+			LIMIT="--max-count=$2"
+		;;
+	esac
 
-	git log --pretty=format:'%ad | %H%n%s%n%b' --date=format:'%m-%d-%Y %H:%M:%S'
+	git log --pretty=format:'%ad | %H%n%s%n%b' --date=format:'%m-%d-%Y %H:%M:%S' "$LIMIT"
 	return 0
 
 }
@@ -179,6 +190,10 @@ case $1 in
 	;;
 	log)
 		git_log_func "${@:2}"
+	;;
+	*)
+		printf "${RED}${BOLD}$TAG Error! Invalid myvcs git command.${NORM}${NC}\n"
+		exit 1
 	;;
 esac
 
