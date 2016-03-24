@@ -68,8 +68,15 @@ function git_backup_func {
 	# Iterate through all branches and push each one to bitbucket
 	for BRANCH in "${BRANCHES[@]}"; do
 		BRANCH="$(awk -F/ '{print $3}' <<< $BRANCH)"
-		git checkout "$BRANCH"
-		ERROR=$(git push bitbucket "$BRANCH" 2>&1 >/dev/null) 
+		git checkout "$BRANCH" 1>/dev/null 2>/dev/null
+		printf "$TAG $BRANCH: Backing up to bitbucket."
+		ERROR=$(git push bitbucket "$BRANCH" 2>&1 >/dev/null) &
+		PID=$!
+		while pkill -0 git; do
+			printf "."
+			sleep 1
+		done
+		printf "\n"
 
 		if [ $? -ne 0 ]; then
 			printf "${RED}${BOLD}$TAG $BRANCH: Failed to backup to bitbucket.${NORM}${NC}\n"

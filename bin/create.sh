@@ -84,7 +84,13 @@ fi
 #   Git Trunk should always be a pure version of SVN's Trunk, with no files differing
 if [ ! -z "$(svn status)" ]; then
 	echo "$TAG Resolving conflicts with SVN files on trunk."
-	svn revert -R . 1>/dev/null 2>/dev/null
+	svn revert -R . 1>/dev/null 2>/dev/null &
+	PID=$!
+	while pkill -0 svn; do
+		printf "."
+		sleep 1
+	done
+	printf "\n"
 fi
 
 # Test if there are any changes that need to be committed to the Git Trunk
@@ -104,11 +110,18 @@ cd "$DEV_ROOT_PATH"
 mkdir "$NAME"
 
 # Start Git in the new directory and pull the files from the Git branch into it
-echo "$TAG Initializing and pulling Git branch into new directory. This may take a few moments."
+printf "$TAG Initializing and pulling Git branch into new directory. This may take a few moments."
 cd "$DEV_ROOT_PATH/$NAME"
 git init 1>/dev/null 2>/dev/null
 git remote add origin "$DEV_MAIN_PATH" 1>/dev/null 2>/dev/null
-git pull origin "$NAME" 1>/dev/null 2>/dev/null
+git pull origin "$NAME" 1>/dev/null 2>/dev/null &
+PID=$!
+while pkill -0 git; do
+	printf "."
+	sleep 1
+done
+printf "\n"
+
 git branch -u origin/"$NAME" 1>/dev/null 2>/dev/null
 
 # Copy workspace.xml & vcs.xml files into .idea directory

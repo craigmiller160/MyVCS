@@ -195,13 +195,20 @@ function svn_switch_func {
 		return 1
 	fi
 
-	echo "$TAG $BRANCH_NAME: Switching to SVN branch."
+	printf "$TAG $BRANCH_NAME: Switching to SVN branch."
 
 	# Get the current URL and execute depending on if it's the same as the current one
 	SVN_CUR_URL="$(svn info | awk '/^URL:/{print $2}')"
 	if [ "$SVN_CUR_URL" != "$NEW_URL" ]; then
 		# If the new URL and the current URL are different, execute the switch
-		ERROR=$(svn switch "$NEW_URL" --accept postpone 2>&1 >/dev/null)
+		ERROR=$(svn switch "$NEW_URL" --accept postpone 2>&1 >/dev/null) &
+		PID=$!
+		while pkill -0 svn; do
+			printf "."
+			sleep 1
+		done
+		printf "\n"
+
 		if [ $? -ne 0 ]; then
 			printf "${RED}${BOLD}$TAG $BRANCH_NAME: Unable to switch to SVN Branch.${NORM}${NC}\n"
 			printf "${RED}$ERROR${NC}\n"
@@ -210,6 +217,7 @@ function svn_switch_func {
 			echo "$TAG $BRANCH_NAME: Successfully switched to SVN branch."
 		fi
 	else
+		printf "\n"
 		# If the new URl and the current URL are the same, update the directory if that option was chosen
 		echo "$TAG $BRANCH_NAME: Directory is already on this SVN Branch."
 	fi
@@ -274,8 +282,15 @@ function svn_copy_func {
 		return 1
 	fi
 
-	echo "$TAG $2: Creating SVN Branch"
-	ERROR=$(svn copy "$URL1" "$URL2" -m "$2 - Branch created." 2>&1 >/dev/null)
+	printf "$TAG $2: Creating SVN Branch"
+	ERROR=$(svn copy "$URL1" "$URL2" -m "$2 - Branch created." 2>&1 >/dev/null) &
+	PID=$!
+	while pkill -0 svn; do
+		printf "."
+		sleep 1
+	done
+	printf "\n"
+
 	if [ $? -ne 0 ]; then
 		printf "${RED}${BOLD}$TAG $2: Failed to create branch.${NORM}${NC}\n"
 		printf "${RED}$ERROR${NC}\n"
@@ -319,8 +334,14 @@ function svn_merge_func {
 		return 1
 	fi
 
-	echo "$TAG Merging [$1] into working directory"
-	ERROR=$(svn merge "$URL" "$DEV_MAIN_PATH" --accept postpone 2>&1 >/dev/null)
+	printf "$TAG Merging [$1] into working directory"
+	ERROR=$(svn merge "$URL" "$DEV_MAIN_PATH" --accept postpone 2>&1 >/dev/null) &
+	while pkill -0 svn; do
+		printf "."
+		sleep 1
+	done
+	printf "\n"
+
 	if [ $? -ne 0 ]; then
 		printf "${RED}${BOLD}$TAG Error! Something went wrong during SVN merge.${NORM}${NC}\n"
 		printf "${RED}$ERROR${NC}\n"
