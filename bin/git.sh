@@ -125,7 +125,14 @@ function git_delete_func {
 	REMOTE_EXISTS=$(git branch -a | grep remotes/bitbucket/$1)
 	if [ "$REMOTE_EXISTS" != "" ]; then
 		# Delete the remote branch
+		printf "$TAG $1: Deleting remote branch."
 		ERROR=$(git push bitbucket --delete $1 2>&1 >/dev/null)
+		while pkill -0 git; do
+			printf "."
+			sleep 1
+		done
+		printf "\n"
+
 		if [ $? -ne 0 ]; then
 			printf "${RED}${BOLD}$TAG $1: Unable to delete remote branch.${NORM}${NC}\n"
 			printf "${RED}$ERROR${NC}\n"
@@ -153,18 +160,22 @@ function git_log_func {
 		return 1
 	fi
 
-	# Third argument is always the directory to run the log from
-	cd "$3"
-
-	# First argument defines the limit on the number of log entries
-	LIMIT=""
-	case "$1" in
-		-l | --limit)
+	# Parse the arguments
+	case $# in
+		1)
+			DIR="$1"
+			LIMIT=""
+		;;
+		3)
+			DIR="$3"
 			LIMIT="--max-count=$2"
 		;;
 	esac
 
-	git log --pretty=format:'%ad | %H%n%s%n%b' --date=format:'%m-%d-%Y %H:%M:%S' "$LIMIT"
+	# Move shell to proper directory
+	cd "$DIR"
+
+	git log --pretty=format:'%ad | %H%n%s%n%b' --date=format:'%m-%d-%Y %H:%M:%S' $LIMIT
 	return 0
 
 }

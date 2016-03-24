@@ -15,6 +15,9 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
 source ./global.sh
 
+echo "NOT CURRENTLY WORKING!!!"
+exit 1
+
 if [ $# -ne 1 ]; then
 	printf "${RED}${BOLD}$TAG Error! Delete command requires a branch name parameter.${NORM}${NC}\n"
 	exit 1
@@ -34,8 +37,14 @@ cd "$DEV_ROOT_PATH"
 # If a directory with that name exists, delete it from the fielsystem.
 DIR_EXISTS=$(ls | grep $1)
 if [ "$DIR_EXISTS" != "" ]; then
-	echo "$TAG $1: Deleting branch directory from filesystem."
+	printf "$TAG $1: Deleting branch directory from filesystem."
 	ERROR=$(rm -rf "$1" 2>&1 >/dev/null)
+	while pkill -0 rm; do
+		printf "."
+		sleep 1
+	done
+	printf "\n"
+
 	if [ $? -ne 0 ]; then
 		printf "${RED}${BOLD}$TAG $1: Unable to delete branch directory from filesystem.${NORM}${NC}\n"
 		printf "${RED}$ERROR${NC}"
