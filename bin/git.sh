@@ -180,17 +180,6 @@ function git_log_func {
 
 }
 
-# FUNCTION
-# DESCRIPTION: A function to parse the parameters to the Git log function.
-#				It determines what value that parameter should have.
-# OPTIONS:
-#			[param] : (Required) The value of the parameter to parse.
-# function parse_git_log_param_func {
-
-	
-
-# }
-
 # Test that there is a valid number of arguments
 if [ $# -lt 1 ]; then
 	printf "${RED}${BOLD}$TAG Error! Invalid number of arguments.${NORM}${NC}\n"
