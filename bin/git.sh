@@ -137,6 +137,13 @@ function git_delete_func {
 # DESCRIPTION: A function to show custom formatted Git logs.
 function git_log_func {
 
+	if [ $# -ne 1 ]; then
+		printf "${RED}${BOLD}$TAG Error! Directory to log not specified."
+		return 1
+	fi
+
+	cd "$1"
+
 	git log --pretty=format:'%ad | %H%n%s%n%b' --date=format:'%m-%d-%Y %H:%M:%S'
 	return 0
 
@@ -147,11 +154,11 @@ function git_log_func {
 #				It determines what value that parameter should have.
 # OPTIONS:
 #			[param] : (Required) The value of the parameter to parse.
-function parse_git_log_param_func {
+# function parse_git_log_param_func {
 
 	
 
-}
+# }
 
 # Test that there is a valid number of arguments
 if [ $# -lt 1 ]; then
