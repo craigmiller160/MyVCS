@@ -137,12 +137,14 @@ function git_delete_func {
 # DESCRIPTION: A function to show custom formatted Git logs.
 function git_log_func {
 
-	if [ $# -ne 1 ]; then
-		printf "${RED}${BOLD}$TAG Error! Directory to log not specified."
+	if [ $# -lt 1 ]; then
+		printf "${RED}${BOLD}$TAG Error! Invalid number of arguments.${NORM}${NC}\n"
 		return 1
 	fi
 
 	cd "$1"
+
+	echo "$2"
 
 	git log --pretty=format:'%ad | %H%n%s%n%b' --date=format:'%m-%d-%Y %H:%M:%S'
 	return 0
@@ -172,7 +174,8 @@ case $1 in
 		git_backup_func
 	;;
 	delete)
-		git_delete_func "$2"
+		#### TODO this only works because it's called as part of the delete.sh script. If called directly from myvcs, issues may arrise
+		git_delete_func "${@:2}" 
 	;;
 	log)
 		git_log_func "${@:2}"

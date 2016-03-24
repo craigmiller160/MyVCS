@@ -37,7 +37,7 @@ case $1 in
 		./bin/update.sh "${@:2}"
 	;;
 	git)
-		./bin/git.sh "${@:2}" "$CURRENT_DIR"
+		./bin/git.sh "$CURRENT_DIR" "${@:2}"
 	;;
 	delete)
 		./bin/delete.sh "${@:2}"
