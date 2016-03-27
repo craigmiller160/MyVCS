@@ -175,7 +175,7 @@ function git_log_func {
 	# Move shell to proper directory
 	cd "$DIR"
 
-	git log --pretty=format:'%ad | %H%n%s%n%b' --date=format:'%m-%d-%Y %H:%M:%S' $LIMIT
+	git log --pretty=format:'%ad | %H%n%s%n%b' --date=format:'%Y-%m-%d %H:%M:%S' $LIMIT
 	return 0
 
 }
