@@ -126,8 +126,8 @@ function git_delete_func {
 	if [ "$REMOTE_EXISTS" != "" ]; then
 		# Delete the remote branch
 		printf "$TAG $1: Deleting remote branch."
-		ERROR=$(git push bitbucket --delete $1 2>&1 >/dev/null)
-		while pkill -0 git; do
+		ERROR=$(git push bitbucket --delete $1 2>&1 >/dev/null) &
+		while pkill -0 -u craigmiller -x git; do
 			printf "."
 			sleep 1
 		done

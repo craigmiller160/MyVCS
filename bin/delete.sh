@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # SCRIPT
 # NAME: delete.sh
 # DESCRIPTION: A script for conveniently deleting all content
@@ -15,8 +15,9 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
 source ./global.sh
 
-echo "NOT CURRENTLY WORKING!!!"
-exit 1
+#### TODO remove this after fixing the bug
+#echo "NOT CURRENTLY WORKING!!!"
+#exit 1
 
 if [ $# -ne 1 ]; then
 	printf "${RED}${BOLD}$TAG Error! Delete command requires a branch name parameter.${NORM}${NC}\n"
@@ -38,8 +39,8 @@ cd "$DEV_ROOT_PATH"
 DIR_EXISTS=$(ls | grep $1)
 if [ "$DIR_EXISTS" != "" ]; then
 	printf "$TAG $1: Deleting branch directory from filesystem."
-	ERROR=$(rm -rf "$1" 2>&1 >/dev/null)
-	while pkill -0 rm; do
+	ERROR=$(rm -rf "$1" 2>&1 >/dev/null) &
+	while pkill -0 -u craigmiller -x rm; do
 		printf "."
 		sleep 1
 	done
