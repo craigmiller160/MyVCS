@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # SCRIPT
 # NAME: git.sh
 # DESCRIPTION: A script to conveniently execute certain complex operations

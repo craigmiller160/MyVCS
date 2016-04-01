@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # SCRIPT
 # NAME: create.sh
 # DESCRIPTION: This is the script that handles the CREATE command. This command

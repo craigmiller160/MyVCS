@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # NAME: testconfig.sh
 # DESCRIPTION: A configuration script to run at the initialization of
 #				of the main script. Its primary purpose is to initalize

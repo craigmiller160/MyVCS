@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # SCRIPT
 # NAME: global.sh
 # DESCRIPTION: A script with global values that should be run when each command

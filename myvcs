@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # SCRIPT
 # NAME: myvcs
 # DESCRIPTION: This script is the main executible for the myvcs script

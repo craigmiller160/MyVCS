@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # SCRIPT
 # NAME: svn.sh
 # DESCRIPTION: A script to conveniently execute SVN commands. It avoids needing

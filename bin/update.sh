@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # SCRIPT
 # NAME: update.sh
 # DESCRIPTION: This is the script that handles updating the working directory.
