@@ -14,6 +14,8 @@
 # Store the current directory at the start of execution
 CURRENT_DIR=$(pwd)
 
+echo $CURRENT_DIR
+
 # Get shell script's directory and move shell there to execute config script
 # SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
