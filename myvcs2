@@ -14,8 +14,89 @@
 # Get the current, starting directory location
 CURRENT_DIR=$(pwd)
 
+###TODO need to add color styling for errors to this
+
+#### TODO document this
+function validate_begin {
+
+	case $1 in
+		n)
+			return 0
+		;;
+		y)
+			return 0
+		;;
+		'')
+			return 1
+		;;
+		*)
+			echo "  Invalid entry! Please try again."
+			return 1
+		;;
+	esac
+
+}
+
+####TODO document this
+function validate_path {
+
+	case $1 in
+		'')
+			return 1
+		;;
+		*)
+			if [ -d $1 ]; then
+				return 0
+			else
+				echo "  Error! Directory doesn't exist"
+				return 1
+			fi
+		;;
+	esac
+
+}
+
+### TODO document this
 function configure_myvcs {
+
+	echo "  Welcome to myvcs. Before you can begin, you need to configure this tool to run."
+	echo ""
+	echo "  For ideal performance, the myvcs root directory needs to be added to your shell's PATH."
+	echo "  This should be done first, prior to other configuration. Once that is done, the rest of the configuration can begin."
+	echo ""
+
+	begin=""
+	validate_begin
+	while [[ $? -ne 0 ]]; do
+		printf "  Are you ready to begin configuring myvcs? (y/n): "
+		read begin
+		validate_begin $begin
+	done
+
+	if [ $begin == 'n' ]; then
+		echo ""
+		echo "  Thank you for downloading myvcs. Please return to configure it when you are ready."
+		return 0
+	fi
+
+	echo ""
+	echo "  BEGINNING CONFIGURATION"
+	echo ""
+
+	echo "  For proper operation, myvcs needs to know where it is located."
+	echo "  Please enter the full path, from the root of the filesystem, to where myvcs is installed."
+	echo ""
 	
+	path=""
+	validate_path $path
+	while [[ $? -ne 0 ]]; do
+		printf "  myvcs path: "
+		read path
+		validate_path $path
+	done
+
+	echo $path
+
 }
 
 # Try getting the properties file path config file
