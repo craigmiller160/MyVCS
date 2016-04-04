@@ -95,7 +95,9 @@ function configure_myvcs {
 		validate_path $path
 	done
 
-	echo $path
+	printf "# Special file for simlinked calls to myvcs.\n# Defines the actual path to the myvcs directory.\n\nMYVCS_PATH=$path" > "$CURRENT_DIR/.myvcs-path.properties"
+
+	echo "Done"
 
 }
 
@@ -108,3 +110,4 @@ else
 	echo "Found file"
 fi
 
+echo $MYVCS_PATH
