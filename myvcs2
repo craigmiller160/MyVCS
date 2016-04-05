@@ -12,12 +12,12 @@
 #							which command is used.
 
 # Get the current, starting directory location
-CURRENT_DIR=$(pwd)
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ###TODO need to add color styling for errors to this
 
 #### TODO document this
-function validate_begin {
+function validate_yes_no {
 
 	case $1 in
 		n)
@@ -57,30 +57,49 @@ function validate_path {
 }
 
 ### TODO document this
-function configure_myvcs {
+function initial_configure_myvcs {
 
-	echo "  Welcome to myvcs. Before you can begin, you need to configure this tool to run."
+	echo "  Myvcs does not appear to be configured. This is expected with a first time run, but can also be due to changes in how it is accessed from your PATH."
 	echo ""
-	echo "  For ideal performance, the myvcs root directory needs to be added to your shell's PATH."
+
+	configure=""
+	validate_yes_no
+	while [[ $? -ne 0 ]]; do
+		printf "  Do you want to start the configuration process now? (y/n): "
+		read configure
+		validate_yes_no $configure
+	done
+
+	if [ $configure == 'n' ]; then
+		echo ""
+		echo "  Thank you. Please return to this configuration tool when you are ready."
+		exit 0
+	fi
+
+	echo ""
+	echo "  CONFIGURE ACCESS FROM PATH"
+
+	echo ""
+	echo "  For ideal performance, the myvcs application needs to be available on your system's PATH, either directory or through a simlink."
 	echo "  This should be done first, prior to other configuration. Once that is done, the rest of the configuration can begin."
 	echo ""
 
 	begin=""
-	validate_begin
+	validate_yes_no
 	while [[ $? -ne 0 ]]; do
-		printf "  Are you ready to begin configuring myvcs? (y/n): "
+		printf "  Have you completed myvcs PATH access configuration? (y/n): "
 		read begin
-		validate_begin $begin
+		validate_yes_no $begin
 	done
 
 	if [ $begin == 'n' ]; then
 		echo ""
-		echo "  Thank you for downloading myvcs. Please return to configure it when you are ready."
-		return 0
+		echo "  Thank you. Please return to this configuration tool when myvcs is accessible from your PATH."
+		exit 0
 	fi
 
 	echo ""
-	echo "  BEGINNING CONFIGURATION"
+	echo "  INSTALLATION LOCATION"
 	echo ""
 
 	echo "  For proper operation, myvcs needs to know where it is located."
@@ -99,13 +118,21 @@ function configure_myvcs {
 
 	echo "Done"
 
+	return 0
+
 }
 
 # Try getting the properties file path config file
-source ./.myvcs-path.properties 1>/dev/null 2>/dev/null
+source $CURRENT_DIR/.myvcs-path.properties 1>/dev/null 2>/dev/null
 
+# If can't find them, start initial configuration
 if [ $? -ne 0 ]; then
-	configure_myvcs
+	initial_configure_myvcs
+	source $CURRENT_DIR/.myvcs-path.properties 1>/dev/null 2>/dev/null
+	if [ $? -ne 0 ]; then
+		echo ""
+		echo "  Error! Still unable to locate configuration. Please try running this config utility again."
+	fi
 else
 	echo "Found file"
 fi
