@@ -170,7 +170,7 @@ function svn_switch_func {
 	SVN_CUR_URL="$(svn info | awk '/^URL:/{print $2}')"
 	if [ "$SVN_CUR_URL" != "$NEW_URL" ]; then
 		# If the new URL and the current URL are different, execute the switch
-		ERROR=$(svn switch "$NEW_URL" --accept postpone 2>&1 >/dev/null) &
+		ERROR=$(svn switch "$NEW_URL" --accept postpone 1>/dev/null 2>&1) &
 		PID=$!
 		while pkill -0 svn; do
 			printf "."
