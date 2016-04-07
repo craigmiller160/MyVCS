@@ -12,6 +12,8 @@
 #			[branch name] : (Required) The name of the branch to create, both in Git
 #									and in SVN.
 
+# UPDATED FOR MYVCS2
+
 # The name of the branch to create.
 NAME=""
 

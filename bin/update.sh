@@ -8,12 +8,6 @@
 #			[branch name] : (Required) The name of the branch to pull an update
 #								from SVN for and merge into the Git branch.
 
-# Get shell script's directory and move shell there to execute config script
-# SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$SCRIPT_DIR"
-source ./global.sh
-
 ### TODO need to be able to handle conflicts silently and warn the user about them
 
 # FUNCTION
@@ -46,9 +40,14 @@ function update_master_from_trunk_func {
 }
 
 # Check the number of arguments first
-if [ $# -ne 1 ]; then
+if [ $# -ne 2 ]; then
 	printf "${RED}${BOLD}$TAG Error! Need to specify name of branch to update.${NORM}${NC}."
 fi
+
+# Set the MYVCS_PATH variable and source bin files
+MYVCS_PATH="$1"
+source "$MYVCS_PATH/myvcs-config.properties"
+source "$MYVCS_PATH/bin/global.sh"
 
 echo "$TAG Downloading any changes from SVN trunk"
 
