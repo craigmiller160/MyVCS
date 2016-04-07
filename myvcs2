@@ -11,8 +11,10 @@
 #							options. What will and won't be required varies depending on
 #							which command is used.
 
-# Get the current, starting directory location
-CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Get the directory the script initializes from. This is either the myvcs directory or the location that myvcs has been simlinked to
+INIT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Get the current directory the shell is in at initialization
+CURRENT_DIR=$(pwd)
 
 ###TODO need to add color styling for errors to this
 
@@ -128,7 +130,7 @@ function initial_configure_myvcs {
 		validate_path $path
 	done
 
-	printf "# Special file for simlinked calls to myvcs.\n# Defines the actual path to the myvcs directory.\n\nMYVCS_PATH=$path" > "$CURRENT_DIR/.myvcs-path.properties"
+	printf "# Special file for simlinked calls to myvcs.\n# Defines the actual path to the myvcs directory.\n\nMYVCS_PATH=$path" > "$INIT_DIR/.myvcs-path.properties"
 
 	echo "Done"
 
@@ -139,12 +141,14 @@ function initial_configure_myvcs {
 #### TODO document this
 function configure_properties {
 
+	# Opening text
 	echo ""
 	echo "  CONFIGURE PROPERTIES"
 	echo ""
 	echo "  Myvcs requires a series of environment properties to be set in order to operate."
 	echo ""
 
+	# Prompt the user if they want to begin the configuration
 	begin=""
 	validate_yes_no
 	while [[ $? -ne 0 ]]; do
@@ -153,20 +157,50 @@ function configure_properties {
 		validate_yes_no $begin
 	done
 
+	# If they chose not to begin the configuration, exit gracefully
 	if [ $begin == 'n' ]; then
 		echo ""
 		echo "  Thank you. Please return to this configuration tool when you are ready to finish setting up myvcs."
 		exit 0
 	fi
 
-	#### TODO auto-generate the TAG property if it doesn't exist
+	# If the TAG variable doesn't exist, just set it silently
+	if [ -z "$TAG" ]; then
+		TAG="[myvcs]:"
+	fi
 
-	if [ -z "$DEV_ROOT_PATH" ]; then
+	# Development Root Path Variable section
+	echo ""
+	echo "  DEVELOPMENT ROOT PATH"
+	echo ""
+
+	# If DEV_ROOT_PATH already exists, ask if user wants to change it
+	setvariable=false
+	if [ -n "$DEV_ROOT_PATH" ]; then
+		echo "  Myvcs needs to know the location of your Development Root. This is a folder that will contain subfolders for each branch you work on."
+		echo "  The Development Root Path is currently set to: $DEV_ROOT_PATH"
 		echo ""
-		echo "  DEVELOPMENT ROOT PATH"
-		echo ""
-		echo "  Please specify the absolute path to the root development directory on this machine. This directory will contain subfolders for all branches."
+
+		result=""
+		validate_yes_no $result
+		while [[ $? -ne 0 ]]; do
+			printf "  Do you want to change this path? (y/n): "
+			read result
+			validate_yes_no $result
+		done
+
+		if [ $result = 'y' ]; then
+			setvariable=true
+		fi
+	else
+		setvariable=true
+	fi
+
+	# If need to set DEV_ROOT_PATH, prompt user for it
+	if $setvariable ; then
+		echo "  Please specify the absolute path to the root development directory on this machine."
 		echo "  This directory MUST already exist in order to be used, it will NOT be created."
+		echo ""
 
 		DEV_ROOT_PATH=""
 		validate_path "$DEV_ROOT_PATH"
@@ -177,12 +211,38 @@ function configure_properties {
 		done
 	fi
 
-	if [ -z "$DEV_MAIN_DIR" ]; then
+	# Dev Main Dir section
+	echo ""
+	echo "  DEVELOPMENT MAIN DIRECTORY"
+	echo ""
+
+	# If DEV_MAIN_DIR exists, ask if the user wants to change it
+	if [ -n "$DEV_MAIN_DIR" ]; then
+		echo "  Within the Development Root, a single folder will be the Development Main directory."
+		echo "  This folder will be your SVN directory, and will be kept up to date with SVN trunk."
+		echo "  The Development Main directory name is currently set to: $DEV_MAIN_DIR"
 		echo ""
-		echo "  DEVELOPMENT MAIN DIRECTORY"
-		echo ""
-		echo "  Please specify the name of the subfolder within the root development directory on this machine. This directory will be on SVN and will be kept up to date with SVN trunk."
+
+		result=""
+		validate_yes_no $result
+		while [[ $? -ne 0 ]]; do
+			printf "  Do you want to change this name? (y/n): "
+			read result
+			validate_yes_no $result
+		done
+
+		if [ $result = 'y' ]; then
+			setvariable=true
+		fi
+	else
+		setvariable=true
+	fi
+
+	# If need to set DEV_MAIN_DIR, prompt user for it
+	if $setvariable ; then
+		echo "  Please specify the name of the subfolder within the root development directory on this machine."
 		echo "  This directory MUST already exist in order to be used, it will NOT be created."
+		echo ""
 
 		DEV_MAIN_DIR=""
 		validate_not_empty "$DEV_MAIN_DIR"
@@ -196,8 +256,10 @@ function configure_properties {
 		done
 	fi
 
+	# Set the DEV_MAIN_PATH based on the previously set values
 	DEV_MAIN_PATH="$DEV_ROOT_PATH/$DEV_MAIN_DIR"
 
+	# Check if set values meet with user approval.
 	echo ""
 	echo "  APPROVE CURRENT PATHS"
 	echo ""
@@ -205,18 +267,65 @@ function configure_properties {
 	echo ""
 	echo "  Dev Root Path: $DEV_ROOT_PATH"
 	echo "  Dev Main Path: $DEV_MAIN_PATH"
+	echo ""
 
 	#### TODO add ability to set SVN URLs
+	#### TODO add ability to set git remote origin for backup
+	#### TODO set INITIAL_CONFIG at the end
+
+	save=""
+	validate_yes_no $save
+	while [[ $? -ne 0 ]]; do
+		printf "  Do you want to set these as your myvcs properties? (y/n): "
+		read save
+		validate_yes_no $save
+	done
+
+	# If the user chooses to save, then write all the configuration to the file
+	if [ $save = 'y' ]; then
+		echo "# myvcs configuration properties" > $MYVCS_PATH/myvcs-config.properties
+		echo "" >> $MYVCS_PATH/myvcs-config.properties
+		echo "# Has myvcs had initial configuration" >> $MYVCS_PATH/myvcs-config.properties
+		echo "INITIAL_CONFIG=true" >> $MYVCS_PATH/myvcs-config.properties
+		echo "" >> $MYVCS_PATH/myvcs-config.properties
+		echo "# Prefix tag for all output" >> $MYVCS_PATH/myvcs-config.properties
+		echo "TAG=$TAG" >> $MYVCS_PATH/myvcs-config.properties
+		echo "" >> $MYVCS_PATH/myvcs-config.properties
+		echo "# Variables for the development directory locations" >> $MYVCS_PATH/myvcs-config.properties
+		echo "DEV_ROOT_PATH=$DEV_ROOT_PATH" >> $MYVCS_PATH/myvcs-config.properties
+		echo "DEV_MAIN_DIR=$DEV_MAIN_DIR" >> $MYVCS_PATH/myvcs-config.properties
+		echo "DEV_MAIN_PATH=$DEV_ROOT_PATH" >> $MYVCS_PATH/myvcs-config.properties
+		echo "" >> $MYVCS_PATH/myvcs-config.properties
+		echo "# Subversion Repository URLs" >> $MYVCS_PATH/myvcs-config.properties
+		#### TODO when the SVN values are able to be set here, these lines will have to change
+		echo "SVN_REPO_URL=https://atlantis.pilotfish-net.com/repos/XCS" >> $MYVCS_PATH/myvcs-config.properties
+		echo "SVN_TRUNK=development" >> $MYVCS_PATH/myvcs-config.properties
+		echo "SVN_BRANCHES=branches" >> $MYVCS_PATH/myvcs-config.properties
+		echo "SVN_TRUNK_URL=$SVN_REPO_URL/$SVN_TRUNK" >> $MYVCS_PATH/myvcs-config.properties
+		echo "SVN_BRANCHES_URL=$SVN_REPO_URL/$SVN_BRANCHES" >> $MYVCS_PATH/myvcs-config.properties
+		echo "" >> $MYVCS_PATH/myvcs-config.properties
+		echo "# Color values" >> $MYVCS_PATH/myvcs-config.properties
+		echo "RED='\033[0;31m'" >> $MYVCS_PATH/myvcs-config.properties
+		echo "NC='\033[0m'" >> $MYVCS_PATH/myvcs-config.properties
+		echo "" >> $MYVCS_PATH/myvcs-config.properties
+		echo "# Style values" >> $MYVCS_PATH/myvcs-config.properties
+		printf "BOLD=$" >> $MYVCS_PATH/myvcs-config.properties
+		printf "(tput bold)\n" >> $MYVCS_PATH/myvcs-config.properties
+		printf "NORM=$" >> $MYVCS_PATH/myvcs-config.properties
+		printf "(tput sgr0)\n" >> $MYVCS_PATH/myvcs-config.properties
+	else
+		echo "  Configuration changes cancelled. If any values are still missing, you will be prompted to re-enter them when you restart myvcs"
+	fi
 
 }
 
 # Try getting the properties file path config file
-source $CURRENT_DIR/.myvcs-path.properties 1>/dev/null 2>/dev/null
+source $INIT_DIR/.myvcs-path.properties 1>/dev/null 2>/dev/null
 
 # If can't find them, start initial configuration
 if [ $? -ne 0 ]; then
 	initial_configure_myvcs
-	source $CURRENT_DIR/.myvcs-path.properties 1>/dev/null 2>/dev/null
+	source $INIT_DIR/.myvcs-path.properties 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ]; then
 		echo ""
 		echo "  Error! Still unable to locate configuration. Please try running this config utility again."
@@ -232,6 +341,39 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+# If initial config is set to false, configure the properties
 if [ $INITIAL_CONFIG = false ]; then
 	configure_properties
 fi
+
+# If no arguments are supplied, then no command has been provided and the script cannot run
+if [ $# -eq 0 ]; then
+	printf "${RED}${BOLD}$TAG Error! No command specified.${NORM}${NC}\n"
+	exit 1
+fi
+
+# Execute myvcs commands
+case $1 in
+	$CREATE)
+		"$MYVCS_PATH/bin/create.sh" "${@:2}"
+	;;
+	$SVN)
+		"$MYVCS_PATH/bin/svn.sh" -wd "$CURRENT_DIR" "${@:2}"
+	;;
+	update)
+		"$MYVCS_PATH/bin/update.sh" "${@:2}"
+	;;
+	git)
+		"$MYVCS_PATH/bin/git.sh" "${@:2}" "$CURRENT_DIR" 
+	;;
+	delete)
+		"$MYVCS_PATH/bin/delete.sh" "${@:2}"
+	;;
+	config)
+		configure_properties
+	;;
+	*)
+		printf "${RED}${BOLD}$TAG Error! Invalid command.${NORM}${NC}\n"
+	;;
+esac
+
