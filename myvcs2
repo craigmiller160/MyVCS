@@ -222,6 +222,7 @@ function configure_properties {
 	echo ""
 
 	# If DEV_MAIN_DIR exists, ask if the user wants to change it
+	setvariable=false
 	if [ -n "$DEV_MAIN_DIR" ]; then
 		echo "  Within the Development Root, a single folder will be the Development Main directory."
 		echo "  This folder will be your SVN directory, and will be kept up to date with SVN trunk."
@@ -276,7 +277,6 @@ function configure_properties {
 
 	#### TODO add ability to set SVN URLs
 	#### TODO add ability to set git remote origin for backup
-	#### TODO set INITIAL_CONFIG at the end
 
 	save=""
 	validate_yes_no $save
@@ -299,7 +299,7 @@ function configure_properties {
 		echo "# Variables for the development directory locations" >> $MYVCS_PATH/myvcs-config.properties
 		echo "DEV_ROOT_PATH=\"$DEV_ROOT_PATH\"" >> $MYVCS_PATH/myvcs-config.properties
 		echo "DEV_MAIN_DIR=\"$DEV_MAIN_DIR\"" >> $MYVCS_PATH/myvcs-config.properties
-		echo "DEV_MAIN_PATH=\"$DEV_ROOT_PATH\"" >> $MYVCS_PATH/myvcs-config.properties
+		echo "DEV_MAIN_PATH=\"$DEV_MAIN_PATH\"" >> $MYVCS_PATH/myvcs-config.properties
 		echo "" >> $MYVCS_PATH/myvcs-config.properties
 		echo "# Subversion Repository URLs" >> $MYVCS_PATH/myvcs-config.properties
 		#### TODO when the SVN values are able to be set here, these lines will have to change
