@@ -17,6 +17,9 @@ SVN_URL=""
 #				exists, it simply builds what would be a valid URL if it did exist.
 # OPTIONS:
 #			[branch name] : (Required) The name of the branch, or "trunk" for trunk.
+
+# UPDATED FOR MYVCS2
+
 function svn_parse_url_func {
 	# Test that the function has the correct number of arguments
 	if [ $# -ne 1 ]; then
