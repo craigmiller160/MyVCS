@@ -5,40 +5,6 @@
 #				is initialized. The values here include constant variables and
 #				functions.
 
-# Variables for the development directory locations
-DEV_ROOT_PATH="/Users/craigmiller/PilotFishDev"
-DEV_MAIN_DIR="PilotFishMain"
-DEV_MAIN_PATH="$DEV_ROOT_PATH/$DEV_MAIN_DIR"
-
-# Subversion Repository URLs
-SVN_REPO_URL="https://atlantis.pilotfish-net.com/repos/XCS"
-SVN_TRUNK="development"
-SVN_BRANCHES="branches"
-SVN_TRUNK_URL="$SVN_REPO_URL/$SVN_TRUNK"
-SVN_BRANCHES_URL="$SVN_REPO_URL/$SVN_BRANCHES"
-
-# Git branch name variables
-GIT_TRUNK="master"
-
-# Output line start
-TAG="[myvcs]:"
-
-# Constant values for the commands
-CREATE="create"
-UPDATE="update"
-COMMIT="commit"
-INIT="init"
-SVN="svn"
-
-# Color values
-RED='\033[0;31m'
-NC='\033[0m'
-
-# Style values
-BOLD=$(tput bold)
-NORM=$(tput sgr0)
-
-
 # The URL value produced by SVN URL parsing function
 SVN_URL=""
 
