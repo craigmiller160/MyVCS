@@ -334,6 +334,8 @@ function svn_merge_func {
 		return 1
 	fi
 
+	### TODO need to improve error message handling for merge command
+
 	printf "$TAG Merging [$1] into working directory"
 	ERROR=$(svn merge "$URL" "$DEV_MAIN_PATH" --accept postpone 2>&1 >/dev/null) &
 	while pkill -0 svn; do
