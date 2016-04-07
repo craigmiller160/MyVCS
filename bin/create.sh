@@ -25,14 +25,10 @@ if [ $# -lt 2 ]; then
 	exit 1
 fi
 
-
-
 # Set the MYVCS_PATH variable and source bin files
 MYVCS_PATH="$1"
 source "$MYVCS_PATH/myvcs-config.properties"
 source "$MYVCS_PATH/bin/global.sh"
-
-echo "$DEV_MAIN_PATH"
 
 # If there is only one parameter (two total, including the command),
 #   then that parameter MUST be the name of the branch. If it is another

@@ -8,7 +8,7 @@
 #			[branch name] : (Required) The name of the branch to pull an update
 #								from SVN for and merge into the Git branch.
 
-### TODO need to be able to handle conflicts silently and warn the user about them
+# UPDATED FOR MYVCS2
 
 # FUNCTION
 # NAME: update_master_from_trunk_func
@@ -51,7 +51,7 @@ source "$MYVCS_PATH/bin/global.sh"
 
 echo "$TAG Downloading any changes from SVN trunk"
 
-case $1 in
+case $2 in
 	trunk)
 		update_master_from_trunk_func
 	;;
