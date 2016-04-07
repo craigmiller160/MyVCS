@@ -169,6 +169,11 @@ function configure_properties {
 		TAG="[myvcs]:"
 	fi
 
+	# If the GIT_TRUNK variable doens't exist, just set it silently
+	if [ -z "$GIT_TRUNK" ]; then
+		GIT_TRUNK="master"
+	fi
+
 	# Development Root Path Variable section
 	echo ""
 	echo "  DEVELOPMENT ROOT PATH"
@@ -292,18 +297,21 @@ function configure_properties {
 		echo "TAG=$TAG" >> $MYVCS_PATH/myvcs-config.properties
 		echo "" >> $MYVCS_PATH/myvcs-config.properties
 		echo "# Variables for the development directory locations" >> $MYVCS_PATH/myvcs-config.properties
-		echo "DEV_ROOT_PATH=$DEV_ROOT_PATH" >> $MYVCS_PATH/myvcs-config.properties
-		echo "DEV_MAIN_DIR=$DEV_MAIN_DIR" >> $MYVCS_PATH/myvcs-config.properties
-		echo "DEV_MAIN_PATH=$DEV_ROOT_PATH" >> $MYVCS_PATH/myvcs-config.properties
+		echo "DEV_ROOT_PATH=\"$DEV_ROOT_PATH\"" >> $MYVCS_PATH/myvcs-config.properties
+		echo "DEV_MAIN_DIR=\"$DEV_MAIN_DIR\"" >> $MYVCS_PATH/myvcs-config.properties
+		echo "DEV_MAIN_PATH=\"$DEV_ROOT_PATH\"" >> $MYVCS_PATH/myvcs-config.properties
 		echo "" >> $MYVCS_PATH/myvcs-config.properties
 		echo "# Subversion Repository URLs" >> $MYVCS_PATH/myvcs-config.properties
 		#### TODO when the SVN values are able to be set here, these lines will have to change
-		echo "SVN_REPO_URL=https://atlantis.pilotfish-net.com/repos/XCS" >> $MYVCS_PATH/myvcs-config.properties
-		echo "SVN_TRUNK=development" >> $MYVCS_PATH/myvcs-config.properties
-		echo "SVN_BRANCHES=branches" >> $MYVCS_PATH/myvcs-config.properties
-		echo "SVN_TRUNK_URL=$SVN_REPO_URL/$SVN_TRUNK" >> $MYVCS_PATH/myvcs-config.properties
-		echo "SVN_BRANCHES_URL=$SVN_REPO_URL/$SVN_BRANCHES" >> $MYVCS_PATH/myvcs-config.properties
+		echo "SVN_REPO_URL=\"https://atlantis.pilotfish-net.com/repos/XCS\"" >> $MYVCS_PATH/myvcs-config.properties
+		echo "SVN_TRUNK=\"development\"" >> $MYVCS_PATH/myvcs-config.properties
+		echo "SVN_BRANCHES=\"branches\"" >> $MYVCS_PATH/myvcs-config.properties
+		echo "SVN_TRUNK_URL=\"$SVN_REPO_URL/$SVN_TRUNK\"" >> $MYVCS_PATH/myvcs-config.properties
+		echo "SVN_BRANCHES_URL=\"$SVN_REPO_URL/$SVN_BRANCHES\"" >> $MYVCS_PATH/myvcs-config.properties
 		echo "" >> $MYVCS_PATH/myvcs-config.properties
+		echo "# Git Trunk Name" >> $MYVCS_PATH/myvcs-config.properties
+		echo "GIT_TRUNK=\"master\"" >> $MYVCS_PATH/myvcs-config.properties
+		echo ""
 		echo "# Color values" >> $MYVCS_PATH/myvcs-config.properties
 		echo "RED='\033[0;31m'" >> $MYVCS_PATH/myvcs-config.properties
 		echo "NC='\033[0m'" >> $MYVCS_PATH/myvcs-config.properties
@@ -354,10 +362,10 @@ fi
 
 # Execute myvcs commands
 case $1 in
-	$CREATE)
-		"$MYVCS_PATH/bin/create.sh" "${@:2}"
+	create)
+		"$MYVCS_PATH/bin/create.sh" "$MYVCS_PATH" "${@:2}"
 	;;
-	$SVN)
+	svn)
 		"$MYVCS_PATH/bin/svn.sh" -wd "$CURRENT_DIR" "${@:2}"
 	;;
 	update)
