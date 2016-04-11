@@ -339,6 +339,10 @@ function configure_properties {
 		echo "  Configuration changes cancelled. If any values are still missing, you will be prompted to re-enter them when you restart myvcs"
 	fi
 
+	echo ""
+	echo "  All configuration changes successfully saved. You are all ready to run myvcs."
+	exit 0
+
 }
 
 # Try getting the properties file path config file
