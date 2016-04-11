@@ -372,10 +372,10 @@ case $1 in
 		"$MYVCS_PATH/bin/update.sh" "$MYVCS_PATH" "${@:2}"
 	;;
 	git)
-		"$MYVCS_PATH/bin/git.sh" "${@:2}" "$CURRENT_DIR" 
+		"$MYVCS_PATH/bin/git.sh" "$MYVCS_PATH" "${@:2}" "$CURRENT_DIR" 
 	;;
 	delete)
-		"$MYVCS_PATH/bin/delete.sh" "${@:2}"
+		"$MYVCS_PATH/bin/delete.sh" "$MYVCS_PATH" "${@:2}"
 	;;
 	config)
 		configure_properties

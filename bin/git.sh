@@ -8,11 +8,7 @@
 #			[branch name] : (Optional) The branch name, only required for
 #							certain commands.
 
-# Get shell script's directory and move shell there to execute config script
-# SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $SCRIPT_DIR
-source ./global.sh
+# UPDATED FOR MYVCS2
 
 # FUNCTION
 # NAME: git_backup_func
@@ -181,22 +177,27 @@ function git_log_func {
 }
 
 # Test that there is a valid number of arguments
-if [ $# -lt 1 ]; then
+if [ $# -lt 2 ]; then
 	printf "${RED}${BOLD}$TAG Error! Invalid number of arguments.${NORM}${NC}\n"
 	exit 1
 fi
 
+# Set the MYVCS_PATH variable and source bin files
+MYVCS_PATH="$1"
+source "$MYVCS_PATH/myvcs-config.properties"
+source "$MYVCS_PATH/bin/global.sh"
+
 # Test the parameter to see which command to run
-case $1 in
+case $2 in
 	backup)
 		git_backup_func
 	;;
 	delete)
 		#### TODO this only works because it's called as part of the delete.sh script. If called directly from myvcs, issues may arrise
-		git_delete_func "${@:2}" 
+		git_delete_func "${@:3}" 
 	;;
 	log)
-		git_log_func "${@:2}"
+		git_log_func "${@:3}"
 	;;
 	*)
 		printf "${RED}${BOLD}$TAG Error! Invalid myvcs git command.${NORM}${NC}\n"
