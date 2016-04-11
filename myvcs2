@@ -366,7 +366,7 @@ case $1 in
 		"$MYVCS_PATH/bin/create.sh" "$MYVCS_PATH" "${@:2}"
 	;;
 	svn)
-		"$MYVCS_PATH/bin/svn.sh" -wd "$CURRENT_DIR" "${@:2}"
+		"$MYVCS_PATH/bin/svn.sh" "$MYVCS_PATH" "${@:2}"
 	;;
 	update)
 		"$MYVCS_PATH/bin/update.sh" "$MYVCS_PATH" "${@:2}"

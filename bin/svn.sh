@@ -15,11 +15,7 @@
 #			[pathnames...] : (Required/Optional) Depending on the command, certain pathnames
 #								may be needed for execution.
 
-# Get shell script's directory and move shell there to execute config script
-# SCRIPT_DIR="$(dirname "${BASH_SOURCE}")"
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $SCRIPT_DIR
-source ./global.sh
+# UPDATED FOR MYVCS2
 
 # Whether or not a working directory value is supplied
 USE_WD="false"
@@ -78,37 +74,24 @@ function validate_command_func {
 
 
 # Test the number of arguments supplied to this script and return an error if it's invalid
-if [ $# -lt 1 ]; then
+if [ $# -lt 2 ]; then
 	printf "${RED}${BOLD}$TAG CRITICAL ERROR!!! Invalid number of arguments supplied to svn script.${NORM}${NC}\n"
 	exit 1
 fi
 
-# If the first argument is the working directory flag, set those values
-if [ "$1" = "-wd" ] || [ "$1" = "--working-directory" ]; then
-	USE_WD="true"
-	WORKING_DIR="$2"
-fi
+# Set the MYVCS_PATH variable and source bin files
+MYVCS_PATH="$1"
+source "$MYVCS_PATH/myvcs-config.properties"
+source "$MYVCS_PATH/bin/global.sh"
 
-# Validate and set the function command, whose position is determined by the USE_WD flag
-if [ "$USE_WD" != "true" ]; then
-	validate_command_func "$@"
-else
-	validate_command_func "${@:3}"
-fi
+validate_command_func "${@:2}"
 
 # Test the status code for the function. If an error, exit the script
 if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-#########
-# TODO Need to remove the require working directory option, don't even want that to be an option here
-#########
-
-# If USE_WD is true, change directory to the working directory provided
-if [ "$USE_WD" = "true" ]; then
-	cd "$WORKING_DIR"
-fi
+cd "$DEV_MAIN_PATH"
 
 # Execute the command with the provided arguments
 case "$COMMAND" in
