@@ -18,7 +18,12 @@ CURRENT_DIR=$(pwd)
 
 ###TODO need to add color styling for errors to this
 
-#### TODO document this
+# FUNCTION
+# NAME: validate_yes_no
+# DESCRIPTION: Validate a yes/no input prompt.
+# OPTIONS:
+#			[input] : (Required) The input to validate that it is
+#						either y or n.
 function validate_yes_no {
 
 	case $1 in
@@ -39,7 +44,12 @@ function validate_yes_no {
 
 }
 
-#### TODO document this
+# FUNCTION
+# NAME: validate_not_empty
+# DESCRIPTION: Validate that user input is not empty
+# OPTIONS:
+#			[input] : (Required) The user input to validate
+#						that it isn't empty.
 function validate_not_empty {
 
 	case $1 in
@@ -53,7 +63,11 @@ function validate_not_empty {
 
 }
 
-####TODO document this
+# FUNCTION
+# NAME: validate_path
+# DESCRIPTION: Validate a directory path provided by the user.
+# OPTIONS:
+#			[path] : (Required) The user-provided directory path to validate.
 function validate_path {
 
 	case $1 in
