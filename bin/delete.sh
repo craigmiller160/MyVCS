@@ -59,12 +59,27 @@ function parse_flag {
 	for (( i = 0; i < ${#flag}; i++ )); do
 		case ${flag:$i:1} in
 			l)
+				if $LOCAL ; then
+					printf "${RED}${BOLD}$TAG Error! Local flag (l) can only be provided once.${NORM}${NC}\n"
+					exit 1
+				fi
+
 				LOCAL=true
 			;;
 			d)
+				if $DIR ; then
+					printf "${RED}${BOLD}$TAG Error! Directory flag (d) can only be provided once.${NORM}${NC}\n"
+					exit 1
+				fi
+
 				DIR=true
 			;;
 			r)
+				if $REMOTE ; then
+					printf "${RED}${BOLD}$TAG Error! Remote flag (r) can only be provided once.${NORM}${NC}\n"
+					exit 1
+				fi
+
 				REMOTE=true
 			;;
 			-)
@@ -80,9 +95,6 @@ function parse_flag {
 	return 0
 
 }
-
-### TODO add argument parsing here
-#### TODO need all flags to be true if no flag argument is provided
 
 # Parse all arguments
 for arg in "${@:2}"; do
@@ -102,11 +114,6 @@ if [ "$NAME" = "" ]; then
 	exit 1
 fi
 
-#### TODO delete all of these echos
-echo $LOCAL
-echo $DIR
-echo $REMOTE
-
 case "$NAME" in
 	"$DEV_MAIN_DIR" | "master")
 		printf "${RED}${BOLD}$TAG Error! Cann't delete main development branch.${NORM}${NC}\n"
@@ -114,33 +121,47 @@ case "$NAME" in
 	;;
 esac
 
-echo "$TAG $NAME: Preparing to delete branch from filesystem, local Git, and remote Git."
+intro="$TAG $NAME: Preparing to delete"
+if $DIR ; then
+	intro="$intro [directory]"
+fi
+
+if $LOCAL ; then
+	intro="$intro [local branch]"
+fi
+
+if $REMOTE ; then
+	intro="$intro [remote branch]"
+fi
+
+
+echo "$intro."
 
 cd "$DEV_ROOT_PATH"
 
-#### TODO add conditional logic to only delete the items that were specified by the flags
+# Delete the directory if that option is chosen
+if $DIR; then
+	DIR_EXISTS=$(ls | grep $NAME)
+	if [ "$DIR_EXISTS" != "" ]; then
+		printf "$TAG $NAME: Deleting branch directory from filesystem."
+		ERROR=$(rm -rf "$NAME" 2>&1 >/dev/null) &
+		while pkill -0 -u craigmiller -x rm; do
+			printf "."
+			sleep 1
+		done
+		printf "\n"
 
-# If a directory with that name exists, delete it from the fielsystem.
-DIR_EXISTS=$(ls | grep $NAME)
-if [ "$DIR_EXISTS" != "" ]; then
-	printf "$TAG $NAME: Deleting branch directory from filesystem."
-	ERROR=$(rm -rf "$NAME" 2>&1 >/dev/null) &
-	while pkill -0 -u craigmiller -x rm; do
-		printf "."
-		sleep 1
-	done
-	printf "\n"
-
-	if [ $? -ne 0 ]; then
-		printf "${RED}${BOLD}$TAG $NAME: Unable to delete branch directory from filesystem.${NORM}${NC}\n"
-		printf "${RED}$ERROR${NC}"
+		if [ $? -ne 0 ]; then
+			printf "${RED}${BOLD}$TAG $NAME: Unable to delete branch directory from filesystem.${NORM}${NC}\n"
+			printf "${RED}$ERROR${NC}"
+		else
+			echo "$TAG $NAME: Successfully deleted branch directory from filesystem."
+		fi
 	else
-		echo "$TAG $NAME: Successfully deleted branch directory from filesystem."
+		printf "${RED}${BOLD}$TAG $NAME: Branch is not a directory on local filesystem. Nothing deleted.${NORM}${NC}\n"
 	fi
-else
-	printf "${RED}${BOLD}$TAG $NAME: Branch is not a directory on local filesystem. Nothing deleted.${NORM}${NC}\n"
 fi
 
-"$MYVCS_PATH/bin/git.sh" "$MYVCS_PATH" delete "$NAME"
+"$MYVCS_PATH/bin/git.sh" "$MYVCS_PATH" delete "$NAME" $LOCAL $REMOTE
 
 exit 0

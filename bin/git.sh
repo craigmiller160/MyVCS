@@ -98,45 +98,53 @@ function git_backup_func {
 function git_delete_func {
 
 	# Test the number of arguments
-	if [ $# -ne 1 ]; then
+	if [ $# -lt 1 ]; then
 		printf "${RED}${BOLD}$TAG Error! Invalid number of arguments to git_delete_func.${NORM}${NC}\n"
 		return 1
 	fi
 
-	echo "$TAG $1: Deleting Git branch"
+	NAME="$1"
+	LOCAL=$2
+	REMOTE=$3
 
 	cd "$DEV_MAIN_PATH"
 
-	# Test if the branch exists before proceeding
-	git_branch_exists_func $1
-	if [ $? -ne 0 ]; then
-		return 1
+	# If local option, delete local Git branch
+	if $LOCAL ; then
+		echo "$TAG $NAME: Deleting local Git branch"
+		# Test if the branch exists before proceeding
+		git_branch_exists_func $NAME
+		if [ $? -ne 0 ]; then
+			printf "${RED}${BOLD}$TAG $NAME: no local Git branch exists.${NORM}${NC}\n"
+		else
+			# Delete the local branch. Won't have an error because we've already tested that the branch exists
+			git branch -D $1 1>/dev/null 2>/dev/null
+			echo "$TAG $NAME: Successfully deleted local Git branch."
+		fi
 	fi
 
-	# Delete the local branch. Won't have an error because we've already tested that the branch exists
-	git branch -D $1 1>/dev/null 2>/dev/null
-	echo "$TAG $1: Successfully deleted local Git branch."
+	# If remote option, delete remote Git branch
+	if $REMOTE ; then
+		REMOTE_EXISTS=$(git branch -a | grep remotes/bitbucket/$NAME)
+		if [ "$REMOTE_EXISTS" != "" ]; then
+			# Delete the remote branch
+			printf "$TAG $NAME: Deleting remote branch."
+			ERROR=$(git push bitbucket --delete $NAME 2>&1 >/dev/null) &
+			while pkill -0 -u craigmiller -x git; do
+				printf "."
+				sleep 1
+			done
+			printf "\n"
 
-	# Test if remote exists before proceeding
-	REMOTE_EXISTS=$(git branch -a | grep remotes/bitbucket/$1)
-	if [ "$REMOTE_EXISTS" != "" ]; then
-		# Delete the remote branch
-		printf "$TAG $1: Deleting remote branch."
-		ERROR=$(git push bitbucket --delete $1 2>&1 >/dev/null) &
-		while pkill -0 -u craigmiller -x git; do
-			printf "."
-			sleep 1
-		done
-		printf "\n"
-
-		if [ $? -ne 0 ]; then
-			printf "${RED}${BOLD}$TAG $1: Unable to delete remote branch.${NORM}${NC}\n"
-			printf "${RED}$ERROR${NC}\n"
+			if [ $? -ne 0 ]; then
+				printf "${RED}${BOLD}$TAG $NAME: Unable to delete remote branch.${NORM}${NC}\n"
+				printf "${RED}$ERROR${NC}\n"
+			else
+				echo "$TAG $NAME: Successfully deleted remote Git branch."
+			fi
 		else
-			echo "$TAG $1: Successfully deleted remote Git branch."
+			printf "${RED}${BOLD}$TAG $NAME: no remote Git branch exists.${NORM}${NC}\n"
 		fi
-	else
-		echo "$TAG $1: No remote Git branch to delete."
 	fi
 
 	return 0
