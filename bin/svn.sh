@@ -27,6 +27,8 @@ COMMAND=""
 PATH1=""
 # The second path, if there is one
 PATH2=""
+# The regex, for the add command
+REGEX=""
 
 # FUNCTION
 # NAME: validate_command_func
@@ -63,6 +65,10 @@ function validate_command_func {
 				PATH1="$2"
 			fi
 		;;
+		add)
+			COMMAND="$1"
+			REGEX="$2"
+		;;
 		*)
 			printf "${RED}${BOLD}$TAG CRITICAL ERROR!!! Invalid command $1.${NORM}${NC}\n"
 			return 1
@@ -70,6 +76,41 @@ function validate_command_func {
 	esac
 
 	return 0
+}
+
+### TODO document this
+function svn_add_func {
+
+	IFS=$'\n'
+
+	files=($(svn status | egrep "^\? *$1" | awk -F' ' '{$1=""; print $0 }' OFS=''))
+
+
+	echo "The following files and directories will be added to SVN:"
+	for f in ${files[@]}; do
+		echo "  $f"
+	done
+
+	valid=false
+
+	while ! $valid; do
+		read -p "Do you want to proceed? (y/n): "
+		case $REPLY in
+			y)
+				valid=true
+				echo "Adding files"
+				svn add ${files[@]// /}
+			;;
+			n)
+				valid=true
+				echo "Cancelling operation"
+			;;
+			*)
+				echo "Invalid response, please try again"
+			;;
+		esac
+	done
+
 }
 
 
@@ -103,6 +144,9 @@ case "$COMMAND" in
 	;;
 	switch)
 		svn_switch_func "$PATH1"
+	;;
+	add)
+		svn_add_func "$REGEX"
 	;;
 esac
 
